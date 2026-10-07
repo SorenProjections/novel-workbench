@@ -38,7 +38,7 @@ def test_task_replay_is_idempotent_and_tracks_usage(tmp_path):
     try:
         service.start(layout, "run_a", "workflow", {}, work)
         state = _finish(service, layout, "run_a")
-        assert state["status"] == "completed", state
+        assert state["status"] == "completed", state.get("message", state)
         service.start(layout, "run_a", "workflow", {}, work)
         assert calls == [1]
         assert state["input_tokens"] == 12 and state["output_tokens"] == 3
@@ -71,7 +71,7 @@ def test_task_cancel_is_project_scoped_and_prevents_next_step(tmp_path):
         service.cancel(layout, "run_a")
         release.set()
         state = _finish(service, layout, "run_a")
-        assert state["status"] == "cancelled", state
+        assert state["status"] == "cancelled", state.get("message", state)
         assert committed == []
     finally:
         release.set(); service.close()
@@ -159,7 +159,7 @@ def test_queue_capacity_and_shutdown_cancel_only_queued_jobs(tmp_path):
         assert service.get(two, "run")["status"] == "cancelled"
         release.set()
         state = _finish(service, one, "run")
-        assert state["status"] == "completed", state
+        assert state["status"] == "completed", state.get("message", state)
         assert calls == ["one"]
     finally:
         release.set()

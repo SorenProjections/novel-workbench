@@ -77,7 +77,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: python -m pip install -c server/requirements-dev.lock -e "./server[dev]"
-      - run: python -m pytest server/tests -q
+      - run: python -m pytest server/tests -q -o verbosity_assertions=2
       - run: python -m pytest scripts/tests -q
       - run: python scripts/smoke_run.py
 
