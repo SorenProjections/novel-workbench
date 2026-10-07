@@ -41,7 +41,11 @@ jobs:
         if: always()
         with:
           name: quality-and-contracts
-          path: .checks/
+          path: |
+            .checks/quality.json
+            .checks/schemas/
+          include-hidden-files: true
+          if-no-files-found: error
 
   lint:
     name: Strict backend checks
@@ -118,4 +122,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: novelwb-wheel
-          path: .checks/wheels/
+          path: .checks/wheels/*.whl
+          include-hidden-files: true
+          if-no-files-found: error
