@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Human-reviewed LLM workflows and versioned story assets for long-form fiction"
 readme = "README.md"
 license = {file = "LICENSE"}
-authors = [{name = "NewbieonfireSpongeforknowledge"}]
+authors = [{name = "SorenProjections"}]
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111",

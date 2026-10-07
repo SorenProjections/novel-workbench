@@ -219,7 +219,7 @@ Smoke 与离线评测使用隔离的验证目录，不读写创作运行数据�
 
 ## 许可证与贡献
 
-本项目采用 [MIT License](LICENSE)，版权署名为 NewbieonfireSpongeforknowledge。
+本项目采用 [MIT License](LICENSE)，版权署名为 SorenProjections。
 欢迎学习、使用和贡献，转载或分发时请保留许可证要求的版权与许可声明。
 第三方前端依赖的许可文本单独保存在
 [THIRD_PARTY_NOTICES.txt](webui/public/THIRD_PARTY_NOTICES.txt)，并随网页和 wheel 分发。

@@ -5,7 +5,7 @@
 
 ## 已完成
 
-- 采用 [MIT](../LICENSE)，版权署名为 `NewbieonfireSpongeforknowledge`，与首次提交作者一致。
+- 采用 [MIT](../LICENSE)，当前版权署名为 `SorenProjections`，已随 GitHub 用户名更新；历史提交保留原作者信息。
   Python 包带有相同许可证、作者和项目简介；前端分发携带依赖许可声明。
 - 整理 [README](../README.md)、[贡献指南](../CONTRIBUTING.md)、[安全说明](../SECURITY.md)、
   Issue/PR 模板、[发布检查流程](RELEASING.md)及 CI 检查。
