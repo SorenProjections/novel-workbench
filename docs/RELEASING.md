@@ -53,6 +53,18 @@ npm --prefix webui run build
 然后按 [DEMO.md](DEMO.md) 检查浏览器内的编辑、批准、刷新和资产查看。
 远端 CI 中已配置 Windows/Linux 后端检查，但远端没有实际运行前，不填写通过徽章或宣称跨平台验收完成。
 
+公开前还应查询锁定依赖的已知漏洞。以下操作需要网络；在独立虚拟环境安装 `pip-audit`，
+避免审计工具改变应用的依赖环境。npm 镜像可能不提供审计接口，审计命令显式使用官方 registry：
+
+```powershell
+python -m pip install pip-audit
+python -m pip_audit --disable-pip --no-deps -r server/requirements-dev.lock
+npm --prefix webui audit --registry=https://registry.npmjs.org
+```
+
+更新依赖后重新运行回归与打包检查，并等待对应最终提交的 CI 通过。审计结果只代表查询时
+数据库已收录的问题，不等同于完整安全审计。
+
 ## 3. 生成和检查本地安装包
 
 前端必须先构建；打包依赖需要已安装。使用已安装的构建依赖可避免构建隔离阶段联网：
