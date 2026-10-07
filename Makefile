@@ -1,4 +1,4 @@
-.PHONY: dev web-dev web-build web-test test lint fmt spec-sync smoke quality export help
+.PHONY: dev web-dev web-build web-test test lint fmt spec-sync smoke quality export demo release-check delivery-test help
 
 help:
 	@echo "可用命令："
@@ -11,6 +11,9 @@ help:
 	@echo "  make spec-sync  验证规范同步"
 	@echo "  make smoke      运行smoke端到端测试"
 	@echo "  make export     导出 JSONSchema"
+	@echo "  make demo       启动无密钥离线审核演示"
+	@echo "  make release-check 检查本地文件与 Git 历史"
+	@echo "  make delivery-test 验证演示与发布检查脚本"
 
 dev:
 	cd server && uvicorn novelwb.server_main:app --reload --port 8000
@@ -44,3 +47,12 @@ smoke:
 
 export:
 	python scripts/export_spec_jsonschema.py
+
+demo:
+	python scripts/demo.py
+
+release-check:
+	python scripts/check_release.py --history
+
+delivery-test:
+	python -m pytest scripts/tests -q

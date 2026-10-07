@@ -1,0 +1,31 @@
+name: Bug 报告
+description: 提交可以复现的功能问题
+body:
+  - type: markdown
+    attributes:
+      value: 请使用合成数据。不要上传密钥、.env、完整日志或私人小说；安全问题见 SECURITY.md。
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境
+      description: 操作系统、Python/Node 版本、提交版本；mock 或真实模型模式。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 最小复现步骤
+      description: 写明操作顺序和可以公开的最小输入。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: 已脱敏的错误摘要
+      description: 只贴必要片段，删除凭据、个人路径和未授权文本。

@@ -5,6 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "novelwb"
 version = "1.0.0"
+description = "Human-reviewed LLM workflows and versioned story assets for long-form fiction"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "NewbieonfireSpongeforknowledge"}]
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111",
@@ -31,11 +35,14 @@ dev = [
 [project.scripts]
 novelwb = "novelwb.cli.main:main"
 
+[tool.setuptools]
+license-files = ["LICENSE"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-novelwb = ["core/*.yaml", "core/step_specs/*.yaml", "core/step_specs/*.json", "prompts/*.yaml", "prompts/**/*.yaml", "prompts/**/*.j2", "prompts/**/*.jinja2", "prompts/**/*.md", "prompts/**/*.txt", "web/*.html", "web/assets/*"]
+novelwb = ["core/*.yaml", "core/step_specs/*.yaml", "core/step_specs/*.json", "prompts/*.yaml", "prompts/**/*.yaml", "prompts/**/*.j2", "prompts/**/*.jinja2", "prompts/**/*.md", "prompts/**/*.txt", "web/*.html", "web/*.txt", "web/assets/*"]
 
 [tool.ruff]
 line-length = 100

@@ -2,6 +2,40 @@
 
 面向长篇小说的 AI 创作工作台。系统以 StoryRoom 故事丰富度分层组织全书、卷和事件资产，以确定性 `reading_assets` 控制单事件上下文，再通过动态路由、世界脉冲和多轮展开写出完整事件正文，最后自然切章。
 
+**适用场景**：希望逐步规划、审核和修改长篇设定的创作者，以及研究可控 LLM 工作流的开发者。
+技术栈为 Python / FastAPI、React / TypeScript / Vite，当前真实模型适配器为 DeepSeek。
+
+[无密钥演示](docs/DEMO.md) · [贡献指南](CONTRIBUTING.md) · [本地发布检查](docs/RELEASING.md) ·
+[安全与数据边界](SECURITY.md) · [真实模型评测方案](docs/EVALUATION.md)
+
+想了解实现取舍，可读 [工程设计阅读索引](docs/ENGINEERING_NOTES.md)。
+
+真实界面与操作路线见 [离线演示截图](docs/DEMO.md#自动验证与记录)。
+
+## 项目状态与能力边界
+
+这是一个按个人精力维护的创作与工程实践项目，不承诺固定更新频率或支持时限。
+欢迎可复现的问题、文档改进和范围明确的修复。
+
+- **可体验**：逐文件审核、分层资产编辑、后台任务进度、版本检查与持久化提交。
+- **工程保障**：重复批准幂等、失败回滚、进程崩溃恢复、SSE 回放与本地草稿恢复，均有对应回归测试。
+- **尚待验证**：真实模型的长篇文学质量、用户使用效果、实际费用与大规模运行性能。
+- **运行范围**：本机单用户工作台；API 尚未提供完整认证和多租户权限控制。
+
+下图展示主要数据流，详细契约仍以 [SPEC](SPEC_v1.md) 为准：
+
+```mermaid
+flowchart LR
+    A[创作意图] --> B[分层规划与设定]
+    B --> C[事件上下文]
+    C --> D[规划与正文草稿]
+    D --> E{人工审核}
+    E -->|修改| D
+    E -->|批准并校验| F[正式资产与事件状态]
+    F --> G[自然切章]
+    F --> C
+```
+
 ## 当前创作链路
 
 1. `foundation`：`spec00 → world_a → world_b → pow_l → pow_s → pow_e → opp_eco → cast`，每次只生成并审核一个文件，批准后才解锁下一文件。
@@ -20,30 +54,44 @@
 - 架构与数据流图见 [`SPEC_v1.md` 的系统概览](SPEC_v1.md#1-系统概览)。
 - [`PROMPTS_REVIEW.md`](PROMPTS_REVIEW.md)：由 StepSpec、提示词注册表与模板自动生成的审阅索引。
 - `server/src/novelwb/core/step_catalog.yaml`、`step_specs/`、`prompts/registry.yaml`、`schemas/`：可执行契约，必须与 SPEC 同步。
-- 根目录 Word 提示词包：历史设计资料；现行运行提示词以 `server/src/novelwb/prompts/` 为准。
+- 早期 Word 提示词包属于历史设计资料，不随当前仓库分发；现行运行提示词以 `server/src/novelwb/prompts/` 为准。
 
 ## 快速开始
 
-需要 Python 3.11 或更新版本，以及 Node.js 和 npm（CI 使用 Node.js 22）。在 `novel-workbench` 目录先准备本机配置：
+需要 Python 3.11+、Node.js 和 npm（CI 使用 Node.js 22）。以下命令均在 `novel-workbench`
+仓库根目录运行。建议先按 [贡献指南](CONTRIBUTING.md) 创建并激活虚拟环境。
+首次安装依赖需要网络，安装完成后的离线演示不调用外部模型。
+
+```powershell
+python -m pip install -c server/requirements-dev.lock -e "./server[dev]"
+npm --prefix webui ci
+npm --prefix webui run build
+python scripts/demo.py
+```
+
+打开 <http://127.0.0.1:8765/>，选择 `demo-ferry`，在“审核中心”编辑并批准作品规格，
+然后在“分层资产”查看正式版本。演示只提供基座第 1/8 个文件的固定响应；
+每次运行使用新的 `.checks/demo/` 子目录，具体操作见 [演示指南](docs/DEMO.md)。
+
+### 使用真实模型创作
+
+完成上面的安装与构建后，停止演示服务，再准备本机配置。
+PowerShell 中执行：
 
 ```powershell
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-调用真实模型前，在 `.env` 中填写自己的 `DEEPSEEK_API_KEY`。`.env` 和创作工作区不纳入 Git；仓库只保留使用占位值的 `.env.example`。
-
-首次启动先构建前端，再启动后端：
+Linux/macOS 中执行 `test -f .env || cp .env.example .env`。
+在 `.env` 中填写自己的 `DEEPSEEK_API_KEY`，核对模型配置，并将 `LLM_ADAPTER` 设为 `deepseek`。
+然后从仓库根目录启动：
 
 ```powershell
-cd webui
-npm ci
-npm run build
-cd ../server
-python -m pip install -c requirements-dev.lock -e ".[dev]"
-python -m pytest
-python -m py_compile src/novelwb/server_main.py
-uvicorn novelwb.server_main:app --reload --port 8000
+python -m uvicorn novelwb.server_main:app --host 127.0.0.1 --port 8000
 ```
+
+`.env` 和创作工作区不纳入 Git；`.env.example` 只保留空凭据。
+模型调用会产生服务方费用；当前离线样例不提供真实费用估算。
 
 修改前端时，可另开终端从 `novel-workbench` 目录启动开发服务器：
 
@@ -110,6 +158,7 @@ python -m pytest tests/test_context_compiler.py -q
 ```
 
 完成标准：规范同步检查通过；涉及的窄测试先通过；权威、事件和章节提交边界保持隔离；未批准的审核稿不得覆盖现有权威数据。
+完整贡献检查见 [CONTRIBUTING.md](CONTRIBUTING.md)，交付脚本检查为 `python -m pytest scripts/tests -q`。
 
 作品基座的八个文件必须逐一生成、逐一审核。当前审核稿可以人工修改；下一文件只读取批准后的权威版本，八个文件全部批准前不会解锁全书总纲。
 
@@ -146,8 +195,23 @@ npm run check
 npm test
 npm run build
 cd ..
-python -m pip wheel --no-deps --wheel-dir .checks/wheels ./server
+python -m pip wheel --no-deps --no-build-isolation --no-index --wheel-dir .checks/wheels ./server
 python scripts/check_package.py
 ```
 
 Smoke 与离线评测使用隔离的验证目录，不读写创作运行数据。正文基线检查机械信号和故事约束，文学质量仍由人工审核。CI 运行 Windows/Linux 后端测试和前端检查；依赖更新应先通过上述检查，再更新版本约束。
+
+本地发布准备可执行 `python scripts/check_release.py --history`；暂存后用
+`python scripts/check_release.py --index --history` 检查实际提交内容。
+详细范围、限制和打包命令见 [RELEASING.md](docs/RELEASING.md)。
+本次已执行的检查及其边界见 [本地交付验收记录](docs/OPEN_SOURCE_PREP.md)。
+
+## 许可证与贡献
+
+本项目采用 [MIT License](LICENSE)，版权署名为 NewbieonfireSpongeforknowledge。
+欢迎学习、使用和贡献，转载或分发时请保留许可证要求的版权与许可声明。
+第三方前端依赖的许可文本单独保存在
+[THIRD_PARTY_NOTICES.txt](webui/public/THIRD_PARTY_NOTICES.txt)，并随网页和 wheel 分发。
+
+本地开源交付准备不代表已经公开发布。项目后续按个人精力维护；参与方式见
+[CONTRIBUTING.md](CONTRIBUTING.md)。

@@ -5,6 +5,7 @@ import argparse
 import os
 import subprocess
 import sys
+from email.parser import BytesParser
 from pathlib import Path
 from uuid import uuid4
 from zipfile import ZipFile
@@ -26,10 +27,13 @@ package = Path(novelwb.__file__).resolve().parent
 assert package.parent == Path(os.environ["NOVELWB_PACKAGE_ROOT"]).resolve(), package
 assert (package / "core/step_specs/stepspec_schema.json").is_file()
 assert (package / "web/index.html").is_file()
+assert (package / "web/THIRD_PARTY_NOTICES.txt").is_file()
 with TestClient(app) as client:
     assert client.get("/health").status_code == 200
     page = client.get("/")
     assert page.status_code == 200 and "/ui/assets/" in page.text
+    notices = client.get("/ui/THIRD_PARTY_NOTICES.txt")
+    assert notices.status_code == 200 and "lucide-react" in notices.text
     assets = re.findall(r'(?:src|href)="(/ui/assets/[^"]+)"', page.text)
     assert assets
     for asset in assets:
@@ -70,6 +74,18 @@ def main() -> int:
     destination = args.workspace.resolve() / uuid4().hex
     destination.mkdir(parents=True, exist_ok=False)
     with ZipFile(wheels[0]) as archive:
+        names = archive.namelist()
+        metadata_name = next(name for name in names if name.endswith(".dist-info/METADATA"))
+        metadata = BytesParser().parsebytes(archive.read(metadata_name))
+        assert (
+            metadata["License-Expression"] == "MIT"
+            or "MIT License" in metadata.get("License", "")
+        ), "Missing MIT package metadata"
+        license_name = next(
+            name for name in names if ".dist-info/" in name and name.endswith("/LICENSE")
+        )
+        canonical = (ROOT / "LICENSE").read_bytes().replace(b"\r\n", b"\n")
+        assert archive.read(license_name).replace(b"\r\n", b"\n") == canonical
         for name in archive.namelist():
             if not (destination / name).resolve().is_relative_to(destination):
                 raise ValueError("Wheel contains a path outside the extraction directory")

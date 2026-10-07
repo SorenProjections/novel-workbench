@@ -1,0 +1,15 @@
+name: 功能建议
+description: 描述创作或开发中遇到的具体问题
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 目前遇到什么问题
+      description: 描述实际场景、现有操作和期望改善。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案及取舍
+      description: 包括替代方案，以及对审核边界、成本或数据兼容性的影响。
