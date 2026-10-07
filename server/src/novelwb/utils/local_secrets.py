@@ -11,6 +11,9 @@ def protection_method() -> str:
 
 
 def _dpapi(data: bytes, *, decrypt: bool) -> bytes:
+    if sys.platform != "win32":
+        raise ValueError("DPAPI 密钥保护仅适用于 Windows")
+
     import ctypes
     from ctypes import wintypes
 

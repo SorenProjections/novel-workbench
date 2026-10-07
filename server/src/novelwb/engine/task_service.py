@@ -5,6 +5,7 @@ from __future__ import annotations
 import builtins
 import json
 import os
+import sys
 import threading
 from collections.abc import Callable, Iterator
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -26,7 +27,7 @@ TERMINAL = {"completed", "failed", "cancelled", "interrupted"}
 def _alive(pid: int) -> bool:
     if pid == os.getpid():
         return True
-    if os.name == "nt":
+    if sys.platform == "win32":
         import ctypes
         from ctypes import wintypes
 
