@@ -11,9 +11,12 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 
 from novelwb.adapters.llm.base import LLMAdapter
+from novelwb.adapters.llm.configured import ConfiguredAdapter
 from novelwb.adapters.llm.deepseek import DeepSeekAdapter
 from novelwb.adapters.llm.mock_replay import MockReplayAdapter
+from novelwb.core.model_settings import ResolvedProfile
 from novelwb.engine.orchestrator import Orchestrator, OrchestratorConfig
+from novelwb.storage.model_settings_store import ModelSettingsStore
 from novelwb.storage.workspace_layout import WorkspaceLayout
 
 # ── 加载 .env ─────────────────────────────────────────────────────────────
@@ -43,11 +46,13 @@ WORKSPACE_ROOT = Path(
 
 
 @lru_cache(maxsize=32)
-def _build_orchestrator(project_id: str) -> Orchestrator:
+def _build_orchestrator(project_id: str, profile: ResolvedProfile | None = None) -> Orchestrator:
     # 兼容 .env 中的 LLM_ADAPTER 和环境变量中的 NOVELWB_LLM_ADAPTER
     adapter_type = os.environ.get("NOVELWB_LLM_ADAPTER", os.environ.get("LLM_ADAPTER", "mock"))
     llm: LLMAdapter
-    if adapter_type == "deepseek":
+    if profile is not None:
+        llm = ConfiguredAdapter(profile)
+    elif adapter_type == "deepseek":
         llm = DeepSeekAdapter()
     else:
         fixture_directory = os.environ.get("NOVELWB_MOCK_FIXTURES")
@@ -64,7 +69,12 @@ def _build_orchestrator(project_id: str) -> Orchestrator:
 
 def get_orchestrator(project_id: str) -> Orchestrator:
     require_project(project_id)
-    return _build_orchestrator(project_id)
+    profile = None if model_settings_disabled() else ModelSettingsStore(WORKSPACE_ROOT).active()
+    return _build_orchestrator(project_id, profile)
+
+
+def model_settings_disabled() -> bool:
+    return os.environ.get("NOVELWB_MODEL_SETTINGS_DISABLED") == "1"
 
 
 # ── 公共响应工具 ──────────────────────────────────────────────────────────

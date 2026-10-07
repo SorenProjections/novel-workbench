@@ -3,7 +3,8 @@
 面向长篇小说的 AI 创作工作台。系统以 StoryRoom 故事丰富度分层组织全书、卷和事件资产，以确定性 `reading_assets` 控制单事件上下文，再通过动态路由、世界脉冲和多轮展开写出完整事件正文，最后自然切章。
 
 **适用场景**：希望逐步规划、审核和修改长篇设定的创作者，以及研究可控 LLM 工作流的开发者。
-技术栈为 Python / FastAPI、React / TypeScript / Vite，当前真实模型适配器为 DeepSeek。
+技术栈为 Python / FastAPI、React / TypeScript / Vite；支持在界面保存和切换 DeepSeek、
+OpenAI 兼容接口、OpenAI Responses、Claude 和 Gemini 配置。
 
 [无密钥演示](docs/DEMO.md) · [贡献指南](CONTRIBUTING.md) · [本地发布检查](docs/RELEASING.md) ·
 [安全与数据边界](SECURITY.md) · [真实模型评测方案](docs/EVALUATION.md)
@@ -50,7 +51,7 @@ flowchart LR
 
 ## 文档真值关系
 
-- [`SPEC_v1.md`](SPEC_v1.md)：唯一规范真值源，当前版本 `v1.0+r18`。
+- [`SPEC_v1.md`](SPEC_v1.md)：唯一规范真值源，当前版本 `v1.0+r19`。
 - 架构与数据流图见 [`SPEC_v1.md` 的系统概览](SPEC_v1.md#1-系统概览)。
 - [`PROMPTS_REVIEW.md`](PROMPTS_REVIEW.md)：由 StepSpec、提示词注册表与模板自动生成的审阅索引。
 - `server/src/novelwb/core/step_catalog.yaml`、`step_specs/`、`prompts/registry.yaml`、`schemas/`：可执行契约，必须与 SPEC 同步。
@@ -75,7 +76,17 @@ python scripts/demo.py
 
 ### 使用真实模型创作
 
-完成上面的安装与构建后，停止演示服务，再准备本机配置。
+完成安装与构建后，停止演示服务，从仓库根目录启动普通工作台：
+
+```powershell
+python -m uvicorn novelwb.server_main:app --host 127.0.0.1 --port 8000
+```
+
+打开 <http://127.0.0.1:8000/>，进入侧栏“模型与 API”：选择服务预设，填写 API 地址、
+模型 ID 和密钥，测试连接后保存，再点击“使用此配置”。可以保存多套配置，切换后新任务立即生效。
+连接测试会发送短请求，可能产生少量费用。详细兼容范围和密钥保存方式见 [模型配置指南](docs/MODEL_CONFIGURATION.md)。
+
+也可继续使用原来的 `.env` 配置。未启用界面配置，或点击“恢复环境配置”时，使用下面的配置方式。
 PowerShell 中执行：
 
 ```powershell

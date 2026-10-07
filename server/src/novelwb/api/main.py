@@ -8,12 +8,15 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from novelwb.api.routers import chapters, pipeline, projects
+from novelwb.api.routers import chapters, model_settings, pipeline, projects
 from novelwb.engine.task_service import TaskService
+from novelwb.storage.model_settings_store import SettingsConflict
 
 _WEB_DIR = Path(__file__).resolve().parents[1] / "web"
 
@@ -46,6 +49,7 @@ app.add_middleware(
 app.include_router(projects.router)
 app.include_router(pipeline.router)
 app.include_router(chapters.router)
+app.include_router(model_settings.router)
 
 if _WEB_DIR.exists():
     app.mount("/ui", StaticFiles(directory=str(_WEB_DIR), html=True), name="ui")
@@ -66,6 +70,35 @@ def health() -> dict[str, Any]:
 @app.exception_handler(ValueError)
 async def invalid_identifier(request: Request, exc: ValueError) -> JSONResponse:
     return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+
+@app.exception_handler(SettingsConflict)
+async def settings_conflict(request: Request, exc: SettingsConflict) -> JSONResponse:
+    return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+@app.exception_handler(RequestValidationError)
+async def invalid_request(request: Request, exc: RequestValidationError) -> JSONResponse:
+    if request.url.path.startswith("/settings/models"):
+        # FastAPI's default includes the submitted input, which may contain an API key.
+        labels = {
+            "name": "配置名称",
+            "protocol": "API 协议",
+            "base_url": "API 基础地址",
+            "model": "模型 ID",
+            "api_key": "API Key",
+            "revision": "配置版本（请刷新）",
+            "max_output_tokens": "最大输出 tokens",
+            "timeout_seconds": "超时秒数",
+            "max_retries": "重试次数",
+        }
+        fields = "、".join(
+            dict.fromkeys(labels.get(str(error["loc"][-1]), "请求内容") for error in exc.errors())
+        )
+        return JSONResponse(
+            status_code=422, content={"detail": f"配置字段不合法，请检查：{fields}"}
+        )
+    return await request_validation_exception_handler(request, exc)
 
 
 @app.exception_handler(FileNotFoundError)

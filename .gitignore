@@ -37,6 +37,8 @@ htmlcov/
 !.env.*.example
 *.pem
 *.key
+.model-settings/
+model-profiles.json*
 
 # 生成文件
 server/src/novelwb/core/step_specs/generated/

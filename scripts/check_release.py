@@ -25,6 +25,7 @@ PRIVATE_DIRECTORIES = {
     "workspace",
     "cache",
     ".runtime",
+    ".model-settings",
     ".checks",
     ".venv",
     "node_modules",
@@ -67,6 +68,7 @@ def private_path(name: str) -> bool:
     environment = lower == ".env" or lower.startswith(".env.")
     return (
         bool({part.lower() for part in path.parts} & PRIVATE_DIRECTORIES)
+        or lower.startswith("model-profiles.json")
         or (environment and not lower.endswith(".example"))
         or lower.endswith((".log", ".pid", ".db", ".sqlite", ".sqlite3", ".pem", ".key"))
         or bool(re.search(r"\.(?:db|sqlite3?)-(?:wal|shm|journal)$", lower))

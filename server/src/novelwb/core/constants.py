@@ -7,6 +7,10 @@ from enum import Enum
 class LLMAdapterType(str, Enum):
     DEEPSEEK = "deepseek"
     MOCK_REPLAY = "mock_replay"
+    OPENAI = "openai"
+    OPENAI_RESPONSES = "openai_responses"
+    ANTHROPIC = "anthropic"
+    GEMINI = "gemini"
 
 
 # ── 搜索/RAG 适配器 ───────────────────────────────────────────

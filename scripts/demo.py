@@ -20,6 +20,7 @@ def prepare_demo(output_root: Path) -> dict:
     directory.mkdir(parents=True, exist_ok=False)
     workspace = directory / "workspace"
     os.environ["NOVELWB_LLM_ADAPTER"] = "mock"
+    os.environ["NOVELWB_MODEL_SETTINGS_DISABLED"] = "1"
     os.environ["NOVELWB_MOCK_FIXTURES"] = str(ROOT / "server/tests/fixtures/mock")
     os.environ["NOVELWB_WORKSPACE"] = str(workspace)
     os.environ["PYTHON_DOTENV_DISABLED"] = "1"

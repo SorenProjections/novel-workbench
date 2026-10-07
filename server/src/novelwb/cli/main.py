@@ -86,7 +86,7 @@ def list_projects() -> None:
     if not ws.exists():
         typer.echo("(workspace 为空)")
         return
-    projects = [d.name for d in sorted(ws.iterdir()) if d.is_dir()]
+    projects = [d.name for d in sorted(ws.iterdir()) if d.is_dir() and not d.name.startswith(".")]
     if not projects:
         typer.echo("(没有项目)")
     for p in projects:

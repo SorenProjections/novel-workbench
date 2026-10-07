@@ -28,8 +28,10 @@ assert package.parent == Path(os.environ["NOVELWB_PACKAGE_ROOT"]).resolve(), pac
 assert (package / "core/step_specs/stepspec_schema.json").is_file()
 assert (package / "web/index.html").is_file()
 assert (package / "web/THIRD_PARTY_NOTICES.txt").is_file()
-with TestClient(app) as client:
+with TestClient(app, base_url="http://127.0.0.1", client=("127.0.0.1", 50000)) as client:
     assert client.get("/health").status_code == 200
+    settings = client.get("/settings/models", headers={"X-Model-Settings": "1"})
+    assert settings.status_code == 200 and settings.json()["data"]["profiles"] == []
     page = client.get("/")
     assert page.status_code == 200 and "/ui/assets/" in page.text
     notices = client.get("/ui/THIRD_PARTY_NOTICES.txt")
@@ -59,7 +61,7 @@ with TestClient(app) as client:
         json={"editable": review["editable"]})
     assert approval.status_code == 200, approval.text
     assert "event: result" in client.get(url + "/run_package/events").text
-print("Package probe passed: bundled resources, static UI, mock generation, approval and replay")
+print("Package probe passed: bundled resources, static UI, model settings, mock generation, approval and replay")
 '''
 
 
@@ -75,6 +77,11 @@ def main() -> int:
     destination.mkdir(parents=True, exist_ok=False)
     with ZipFile(wheels[0]) as archive:
         names = archive.namelist()
+        assert not any(
+            ".model-settings" in Path(name).parts
+            or Path(name).name.startswith("model-profiles.json")
+            for name in names
+        ), "Local model credentials must never be packaged"
         metadata_name = next(name for name in names if name.endswith(".dist-info/METADATA"))
         metadata = BytesParser().parsebytes(archive.read(metadata_name))
         assert (

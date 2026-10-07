@@ -8,7 +8,6 @@
 
 from __future__ import annotations
 
-import threading
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -90,6 +89,7 @@ from novelwb.storage import (
     StagingStore,
 )
 from novelwb.storage.workspace_layout import WorkspaceLayout
+from novelwb.utils.file_locks import shared_thread_lock
 from novelwb.utils.ids import new_event_id, new_staging_id
 from novelwb.utils.io_atomic import atomic_write_json
 from novelwb.utils.logger import get_logger
@@ -156,12 +156,14 @@ class Orchestrator:
         self._context_store = ContextStore(self._layout)
         self._staging_store = StagingStore(self._layout)
         self._asset_catalog = LayeredAssetCatalog(self._layout)
-        self._foundation_generation_lock = threading.Lock()
-        self._master_generation_lock = threading.Lock()
-        self._volume_generation_lock = threading.Lock()
-        self._event_generation_lock = threading.Lock()
-        self._event_approval_lock = threading.Lock()
-        self._review_revision_lock = threading.Lock()
+        # Model switches create a new adapter snapshot, but must retain project guards.
+        project = self._layout.project_dir
+        self._foundation_generation_lock = shared_thread_lock(project, "foundation_generation")
+        self._master_generation_lock = shared_thread_lock(project, "master_generation")
+        self._volume_generation_lock = shared_thread_lock(project, "volume_generation")
+        self._event_generation_lock = shared_thread_lock(project, "event_generation")
+        self._event_approval_lock = shared_thread_lock(project, "event_approval")
+        self._review_revision_lock = shared_thread_lock(project, "review_revision")
         self._reviews = ReviewService(self)
 
     # ── 细粒度进度上报（让 StepRunner 的每一步流式可见）────────────────────

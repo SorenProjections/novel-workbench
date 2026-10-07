@@ -95,6 +95,8 @@ def test_untracked_chinese_path_is_scanned_without_staging(repository: Path):
         "server/src/novelwb/web/index.html",
         "database.sqlite-wal",
         "server/WORKSPACE/book.json",
+        ".model-settings/model-profiles.json",
+        "model-profiles.json.backup",
     ],
 )
 def test_runtime_and_local_configuration_are_rejected(path: str):

@@ -1,5 +1,5 @@
 export type CardType = 'plot' | 'character' | 'scene' | 'faction' | 'item' | 'rule';
-export type WorkspaceView = 'pipeline' | 'assets' | 'ecosystem' | CardType | 'chapters' | 'context';
+export type WorkspaceView = 'pipeline' | 'assets' | 'ecosystem' | CardType | 'chapters' | 'context' | 'models';
 
 export interface ApiEnvelope<T> {
   status: 'ok' | 'error';

@@ -1,4 +1,4 @@
-import { BookOpen, CircleHelp, Cloud, RefreshCw, ServerCog } from 'lucide-react';
+import { BookOpen, CircleHelp, Cloud, RefreshCw, ServerCog, Settings2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, displayError } from './api';
 import { attachRunEvents, isTerminalEvent } from './runStream';
@@ -7,6 +7,7 @@ import ContextWorkspace from './components/ContextWorkspace';
 import EntityLibrary from './components/EntityLibrary';
 import Inspector from './components/Inspector';
 import LayeredAssetsWorkspace from './components/LayeredAssetsWorkspace';
+import ModelSettingsWorkspace from './components/ModelSettingsWorkspace';
 import PipelineWorkspace from './components/PipelineWorkspace';
 import Sidebar from './components/Sidebar';
 import StoryEcosystem from './components/StoryEcosystem';
@@ -478,6 +479,8 @@ export default function App() {
       onSprout={(goal, count, startIndex, resultTarget, isKey) => startStream('sprout/stream', { root_event_goal: goal, event_count: count, start_index: startIndex, result_target: resultTarget, is_key_event: isKey })}
       onStop={stopRun}
     />;
+  } else if (view === 'models') {
+    content = <ModelSettingsWorkspace />;
   } else if (view === 'assets') {
     content = <LayeredAssetsWorkspace
       projectId={projectId}
@@ -505,15 +508,16 @@ export default function App() {
           {lastSyncedAt && !running && <span className="sync-status">已同步 {lastSyncedAt}</span>}
           <span className={healthy ? 'health online' : 'health'}><Cloud size={15} />{healthy ? '服务在线' : '服务离线'}</span>
           <button className="icon-button" onClick={() => void refreshProject()} title="同步工作台"><RefreshCw size={16} /></button>
+          <button className="icon-button" onClick={() => setView('models')} title="配置模型与 API"><Settings2 size={16} /></button>
           <a className="icon-button" href="/docs" target="_blank" rel="noreferrer" title="接口文档"><ServerCog size={16} /></a>
           <a className="icon-button" href="/health" target="_blank" rel="noreferrer" title="健康检查"><CircleHelp size={16} /></a>
         </div>
       </header>
       {notice && <div className="global-notice">{notice}<button onClick={() => setNotice('')}>关闭</button></div>}
-      <main className="workbench-grid">
+      <main className={`workbench-grid${view === 'models' ? ' settings-grid' : ''}`}>
         <Sidebar projects={projects} projectId={projectId} meta={meta} state={state} view={view} onProjectChange={setProjectId} onViewChange={setView} onRefresh={loadProjects} onCreate={createProject} />
         <div className="workspace-canvas">{content}</div>
-        <Inspector state={state} activity={activity} lastResult={lastResult} />
+        {view !== 'models' && <Inspector state={state} activity={activity} lastResult={lastResult} />}
       </main>
     </div>
   );

@@ -4,6 +4,11 @@
 
 ## [Unreleased] — 本地开源交付准备
 
+- 新增“模型与 API”配置页：多套命名配置、API 地址、模型 ID、只写密钥保存、测试连接及新任务切换
+- 支持 DeepSeek、OpenAI Chat Completions 兼容接口、OpenAI Responses、Claude Messages 和 Gemini generateContent
+- Windows 密钥使用当前账户 DPAPI，其他平台使用受限文件权限；配置支持并发版本保护、原子保存和错误脱敏
+- 规范升级至 v1.0+r19，保留环境变量回退与离线演示锁定；新增协议和配置生命周期回归测试
+
 - 采用 MIT License，补齐版权署名、安装包许可元数据及前端第三方许可文本
 - 增加隔离工作区的无密钥审核演示、演示路线和真实模型评测记录方案
 - 增加贡献指南、安全边界、问题模板、PR 模板和本地发布验收流程

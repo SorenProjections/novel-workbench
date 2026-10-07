@@ -22,6 +22,13 @@ _locks: WeakValueDictionary[str, threading.RLock] = WeakValueDictionary()
 _held = threading.local()
 
 
+def shared_thread_lock(resource: Path, scope: str) -> threading.RLock:
+    """Keep a resource's in-process guard shared across independently configured owners."""
+    key = f"{os.path.normcase(str(resource.resolve()))}::{scope}"
+    with _registry_guard:
+        return _locks.setdefault(key, threading.RLock())
+
+
 class FileLock:
     """Advisory OS lock: a persistent .lock file is never a stale owner."""
 

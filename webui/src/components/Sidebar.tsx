@@ -12,6 +12,7 @@ import {
   Plus,
   RefreshCw,
   Scale,
+  Settings2,
   Users,
 } from 'lucide-react';
 import type { CardType, ProjectMeta, ProjectSummary, StateData, WorkspaceView } from '../types';
@@ -29,6 +30,7 @@ const navItems: Array<{ id: WorkspaceView; label: string; icon: typeof LayoutDas
   { id: 'rule', label: '规则', icon: Scale, cardType: 'rule' },
   { id: 'chapters', label: '章节', icon: BookOpenText },
   { id: 'context', label: '上下文追踪', icon: Boxes },
+  { id: 'models', label: '模型与 API', icon: Settings2 },
 ];
 
 interface SidebarProps {
