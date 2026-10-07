@@ -1,0 +1,11 @@
+prompt_key: graphE.commit
+version: "2.0"
+description: "事件原子提交"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_id
+  - input_pack.run_id
+  - input_pack.diff_report
+  - input_pack.committed_at
+output_format: json

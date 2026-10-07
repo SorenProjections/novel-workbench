@@ -1,0 +1,13 @@
+prompt_key: graph1.oppEco
+version: "2.1"
+description: "对手生态OppEco"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+  - input_pack.world_b_content
+  - input_pack.pow_l_content
+  - input_pack.pow_s_content
+  - input_pack.pow_e_content
+output_format: json

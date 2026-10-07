@@ -1,0 +1,29 @@
+step_key: graph3.volume.fatigue_report
+graph: "3"
+schema_version: v1
+description: "卷级疲劳报告生成（变形/钩子/Breather/MomentumDebt趋势统计）"
+input_schema: CreateRunRequest
+output_schema: FatigueReport
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph3.fatigueReport
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 4000
+  temperature: 0.3
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

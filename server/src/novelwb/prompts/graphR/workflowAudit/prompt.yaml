@@ -1,0 +1,12 @@
+prompt_key: graphR.workflow.audit
+version: "1.1"
+description: "独立审核当前暂存稿并生成可执行修改意见"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.review_kind
+  - input_pack.file_label
+  - input_pack.original_content
+  - input_pack.required_constraints
+  - input_pack.full_context
+output_format: json

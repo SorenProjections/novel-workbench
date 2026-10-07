@@ -1,0 +1,11 @@
+prompt_key: graph3.volumeStoryRoom
+version: "3.0"
+description: "本卷故事、实体议程与大场面深化"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.longline_content
+  - input_pack.volume_plan_content
+  - input_pack.carryover_context
+  - input_pack.complexity_profile
+output_format: json

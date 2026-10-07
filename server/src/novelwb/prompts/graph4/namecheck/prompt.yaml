@@ -1,0 +1,13 @@
+prompt_key: graph4.namecheck
+version: "2.0"
+description: "命名去重"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_slot
+  - input_pack.block_plan
+  - input_pack.bible_content
+  - input_pack.char_content
+  - input_pack.reg_content
+  - input_pack.context_meta
+output_format: json

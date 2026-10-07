@@ -1,0 +1,38 @@
+{# graph3.fatigueReport v2.0 — 卷级疲劳报告（冲突变形/钩子重复/Breather比例/动量债趋势） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是一位专注于读者体验的叙事质量分析师。分析卷规划的事件槽位序列，评估叙事疲劳风险：冲突形态单调性、钩子重复率、Breather事件分布、动量债累积趋势。输出具体的风险警告和调整建议。
+
+输出必须只包含 FatigueReport 允许字段：chapter_range、conflict_form_ratio、advance_delta_frequency、hook_repeat_rate、breather_usage_rate、max_consecutive_breather_seen、momentum_debt_trend、recommendations、intent_rotation_advice。风险等级、警告、状态卡建议都写入 recommendations 字符串，不要新增顶层字段。
+
+## 卷规划内容
+
+{{ input_pack.volume_plan_content | tojson(indent=2) }}
+
+## 卷ID
+
+{{ input_pack.volume_id }}
+
+## 输出JSON结构与字段说明
+
+{
+  "chapter_range": null,
+  "conflict_form_ratio": {
+    "一对一战斗": 0.4,
+    "团队对抗": 0.2,
+    "信息博弈": 0.2,
+    "资源争夺": 0.2
+  },
+  "advance_delta_frequency": 0.6,
+  "hook_repeat_rate": 0.15,
+  "breather_usage_rate": 0.2,
+  "max_consecutive_breather_seen": 1,
+  "momentum_debt_trend": [1, 2, 3, 2],
+  "recommendations": [
+    "风险等级：low / medium / high；量化依据写在本条中",
+    "具体警告：前5个事件均为一对一战斗，建议插入一个信息博弈场景",
+    "调整建议：建议将 slot_id evt_vol1_007 改为 Breather 类型，缓解连续战斗疲劳",
+    "状态卡建议：本卷事件执行时优先按情节/人物/场景/势力抽取阅读焦点，不要向单事件塞入全量设定"
+  ],
+  "intent_rotation_advice": "整体意图轮换建议，例如：建议采用3:1:1的Advance:Settle:Foreshadow比例，当前规划偏重Advance"
+}

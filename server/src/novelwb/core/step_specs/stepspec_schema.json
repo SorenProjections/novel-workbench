@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StepSpec",
+  "description": "单个执行步骤的规格定义，约束输入包/产物/LLM调用/RAG/回归参数",
+  "type": "object",
+  "required": ["step_key", "graph", "description", "input_schema", "output_schema", "llm"],
+  "additionalProperties": false,
+  "properties": {
+    "step_key": {
+      "type": "string",
+      "description": "唯一步骤键，必须在 step_catalog.yaml 中注册",
+      "pattern": "^[a-z0-9]+\\.[a-z0-9._]+$"
+    },
+    "graph": {
+      "type": "string",
+      "description": "所属图编号",
+      "enum": ["0", "1", "2", "3", "4", "5", "6", "E", "S", "R", "P"]
+    },
+    "description": {
+      "type": "string",
+      "description": "步骤说明"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema版本，固定为v1",
+      "const": "v1"
+    },
+    "input_schema": {
+      "type": "string",
+      "description": "输入包对应的 schema_registry 中的 schema_name"
+    },
+    "output_schema": {
+      "type": "string",
+      "description": "产物对应的 schema_registry 中的 schema_name"
+    },
+    "llm": {
+      "type": "object",
+      "description": "LLM调用配置",
+      "required": ["prompt_key", "best_of_n"],
+      "additionalProperties": false,
+      "properties": {
+        "prompt_key": {
+          "type": "string",
+          "description": "对应 prompts/registry.yaml 中的 prompt_key"
+        },
+        "best_of_n": {
+          "type": "integer",
+          "description": "并发候选数",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "offline": {
+          "type": "boolean",
+          "description": "是否断网模式（禁止联网），默认true",
+          "default": true
+        },
+        "model": {
+          "type": "string",
+          "description": "DeepSeek API model id；不填则使用环境变量/适配器默认值",
+          "enum": ["deepseek-v4-pro", "deepseek-v4-flash"]
+        },
+        "thinking": {
+          "type": "string",
+          "description": "DeepSeek V4 thinking模式开关；enabled时temperature/top_p等采样参数无效",
+          "enum": ["enabled", "disabled"]
+        },
+        "reasoning_effort": {
+          "type": "string",
+          "description": "DeepSeek V4 thinking强度，仅thinking=enabled时生效",
+          "enum": ["high", "max"]
+        },
+        "response_format": {
+          "type": "string",
+          "description": "结构化输出模式；json_object会向API传 response_format={type: json_object}",
+          "enum": ["json_object"]
+        },
+        "max_tokens": {
+          "type": "integer",
+          "description": "最大输出token数",
+          "minimum": 100,
+          "maximum": 16000
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 2.0
+        }
+      }
+    },
+    "hardlint": {
+      "type": "object",
+      "description": "HardLint配置",
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "使用的HardLint规则集",
+          "enum": ["default", "key_artifact", "event_commit", "chapterize"]
+        },
+        "enabled_rule_groups": {
+          "type": "array",
+          "description": "启用的规则组（A-G），不填则使用profile默认",
+          "items": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D", "E", "F", "G"]
+          }
+        }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "description": "回归测试配置",
+      "additionalProperties": false,
+      "properties": {
+        "required_on_key_artifact": {
+          "type": "boolean",
+          "description": "关键产物是否强制回归",
+          "default": false
+        },
+        "profiles": {
+          "type": "array",
+          "description": "触发的回归profile列表",
+          "items": {
+            "type": "string",
+            "enum": ["style", "mechanism", "event_boundary", "chapterize"]
+          }
+        }
+      }
+    },
+    "rag": {
+      "type": "object",
+      "description": "RAG配置（当前版本跳过）",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "card_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["FACT_CARD", "STYLE_MATERIAL", "PLATFORM_CONSTRAINT", "NAMECHECK"]
+          }
+        }
+      }
+    },
+    "commit_type": {
+      "type": "string",
+      "description": "此步骤触发的提交类型",
+      "enum": ["event", "chapter", "auth_patch", "none"]
+    },
+    "is_key_artifact": {
+      "type": "boolean",
+      "description": "是否为关键产物步骤（触发关键路径）",
+      "default": false
+    },
+    "budget": {
+      "type": "object",
+      "description": "产物预算约束",
+      "additionalProperties": false,
+      "properties": {
+        "max_new_entities": {
+          "type": "integer",
+          "description": "单次新增实体上限",
+          "minimum": 0
+        },
+        "max_new_terms": {
+          "type": "integer",
+          "description": "单次新增术语上限",
+          "minimum": 0
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "正文最大字数",
+          "minimum": 0
+        },
+        "max_explanation_density": {
+          "type": "number",
+          "description": "说明书密度上限（0-1）",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    }
+  }
+}

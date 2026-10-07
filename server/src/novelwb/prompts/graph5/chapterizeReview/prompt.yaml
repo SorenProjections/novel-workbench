@@ -1,0 +1,10 @@
+prompt_key: graph5.chapterizeReview
+version: "3.0"
+description: "章级评审"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.chapter_specs
+  - input_pack.chapter_texts
+  - input_pack.event_id
+output_format: json

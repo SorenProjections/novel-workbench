@@ -1,0 +1,10 @@
+prompt_key: graph1.worldA
+version: "2.1"
+description: "世界A层硬锚"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.user_brief
+  - input_pack.complexity_profile
+output_format: json

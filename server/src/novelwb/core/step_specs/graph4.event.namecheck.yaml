@@ -1,0 +1,29 @@
+step_key: graph4.event.namecheck
+graph: "4"
+schema_version: v1
+description: "命名去重检查（NAMECHECK证据卡，当前版本跳过联网）"
+input_schema: CreateRunRequest
+output_schema: RunManifest
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph4.namecheck
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 500
+  temperature: 0.1
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, D]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

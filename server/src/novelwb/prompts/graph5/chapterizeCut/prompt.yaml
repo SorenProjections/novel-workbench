@@ -1,0 +1,11 @@
+prompt_key: graph5.chapterizeCut
+version: "3.0"
+description: "完整事件正文自然切章"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_id
+  - input_pack.draft_text
+  - input_pack.history_count
+  - input_pack.scene_ids
+output_format: json

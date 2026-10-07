@@ -1,0 +1,107 @@
+{# graph3.volumeStoryRoom v2.0 - 本卷故事核心与角色，不生成地图和逐事件设计 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是本卷故事主编和人物编剧。本步只深化卷故事引擎、卷伏笔、角色成长、卷角色卡和关系轨迹。地图与场景由下一步生成，逐事件设计由再下一步生成。
+
+## 原则
+1. 严格继承全书总纲、伏笔和成长线，只细化本卷，不得一卷耗尽全书成长。
+2. 本卷角色卡必须写清背景、个性、主动目标、能力边界、当前状态、知识边界、语言和行为辨识点。
+3. 新增卷角色必须有个人目标、行动能力、退出或转长期条件，不能只是工具人。
+4. 卷伏笔引用全书 hook_id 或标记 volume_only，并明确本卷埋设、递进和回收。
+5. 内容丰富来自具体压力、选择、反应、代价与关系变化，不来自增加秘密层数。
+6. relationship_tracks 必须继承全书 ensemble_relationship_arcs：核心关系沿用原 relationship_id 和 character_ids，只截取本卷应发生的阶段，不得另起ID、提前完成终局关系或越过 forbidden_jump。
+7. 只有本卷临时出现且不属于核心关系索引的次要关系，才可使用 vol_rel_ 前缀；不得借此复制已有核心关系。
+
+## 输入
+全书长线与故事室：{{ input_pack.longline_content | tojson(indent=2) }}
+
+卷纲骨架：{{ input_pack.volume_plan_content | tojson(indent=2) }}
+
+上卷承接：{{ input_pack.carryover_context | default({}) | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出结构
+{
+  "volume_story_engine": {
+    "volume_center": "本卷唯一核心行动与变化",
+    "opening_state": "卷首人物、关系、资源和局势",
+    "causal_spine": [{"cause": "前因", "event_slot_id": "已有槽位ID", "choice": "选择", "result": "结果", "next_pressure": "新压力"}],
+    "emotional_curve": ["开卷、中段、高峰、卷末的读者体验"],
+    "midpoint_turn": "中点如何改变目标或代价",
+    "climax_choice": "卷高潮的主动选择与代价",
+    "ending_state": "卷末多维状态与下卷接口"
+  },
+  "volume_foreshadowing": [
+    {
+      "hook_id": "全书hook_id或volume_only_稳定ID",
+      "purpose": "本卷作用",
+      "plant_slots": ["事件槽ID"],
+      "reinforce_slots": ["事件槽ID"],
+      "payoff_slot": "事件槽ID或下卷窗口",
+      "visible_carriers": ["具体载体"],
+      "information_progression": ["每次新增信息"],
+      "involved_character_ids": ["角色ID"],
+      "early_reveal_guard": "不能提前说破的内容"
+    }
+  ],
+  "volume_character_arcs": [
+    {
+      "character_id": "稳定角色ID",
+      "name": "姓名",
+      "volume_role": "本卷叙事职能",
+      "start_state": "卷首能力、资源、关系、情绪和认知",
+      "volume_goal": "本卷主动目标",
+      "pressure_points": ["持续压力"],
+      "key_choices": [{"event_slot_id": "槽位ID", "choice": "选择", "cost": "代价", "visible_change": "可见变化"}],
+      "relationship_progress": ["分阶段关系变化"],
+      "ability_progress": ["能力试用、受限、掌握与代价"],
+      "end_state": "卷末多维状态",
+      "carry_to_next_volume": "未完成部分"
+    }
+  ],
+  "volume_cast_cards": [
+    {
+      "character_id": "稳定角色ID",
+      "name": "姓名",
+      "story_status": "主角/核心配角/对手/导师/关系锚点/功能配角",
+      "background": {"origin": "出身", "faction_id": "势力ID或空字符串", "formative_experience": "塑造经历", "social_position": "社会位置与资源"},
+      "personality": {"surface_traits": ["外显性格"], "inner_traits": ["内层性格"], "desire": "欲望", "fear": "恐惧", "flaw": "缺点", "value_boundary": "底线", "stress_response": "受压反应"},
+      "ability": {"current_level": "当前水平", "strengths": ["优势"], "limitations": ["限制"], "signature_methods": ["辨识性手段"], "costs": ["代价"]},
+      "current_state": {"location_requirement": "卷首所需空间类型", "resources": ["资源"], "condition": "身体或特殊状态", "knowledge": ["确知信息"], "blind_spots": ["未知或误解"], "relationship_positions": ["关键关系"]},
+      "voice_and_presence": {"speech_rhythm": "说话节奏与策略", "habitual_actions": ["习惯动作"], "sensory_impression": "登场印象", "contrast": "与他人的鲜明差异"},
+      "scene_functions": ["适合承担的场景作用"],
+      "entry_slot": "首次或重新登场槽位ID",
+      "exit_or_persist_condition": "退场、转场或延续条件"
+    }
+  ],
+  "relationship_tracks": [
+    {
+      "relationship_id": "核心关系沿用全书rel_稳定ID；卷内临时关系使用vol_rel_稳定ID",
+      "name": "关系名",
+      "character_ids": ["必须与全书关系弧相同的角色A ID", "角色B ID"],
+      "start_dynamic": "卷初关系",
+      "friction": "摩擦来源",
+      "interaction_modes": ["可轮换的互动方式"],
+      "turn_slots": ["关系变化槽位ID"],
+      "end_dynamic": "卷末关系",
+      "full_arc_position": "本卷处于全书关系弧的哪个阶段，以及仍未兑现的后续阶段",
+      "forbidden_jump": "继承全书关系弧的禁止跨越边界"
+    }
+  ],
+  "volume_line_ledger": [
+    {"line_id": "引用全书线ID或创建vol_line_卷级ID", "line_type": "main/subplot/hidden/relationship/faction/item/ecology", "volume_goal": "本卷目标", "start_state": "卷初状态", "scheduled_movements": [{"event_slot_id": "槽位ID", "action": "推进/碰撞/误导/暂压/回收", "visible_trace": "正文载体"}], "end_state": "卷末状态", "carryover": "是否及如何带入下一卷"}
+  ],
+  "entity_agendas": [
+    {"agenda_id": "agenda_稳定ID", "subject_id": "角色、势力、生物或组织ID", "subject_type": "character/faction/creature/ecology", "independent_goal": "不依附主角的目标", "resources": ["可调用资源"], "constraints": ["限制"], "planned_actions": [{"event_slot_id": "槽位ID", "action": "主动行动", "offscreen_possible": true, "visible_trace": "结果如何显形"}], "collision_ids": ["会碰撞的议程或故事线ID"], "fallback_action": "主角不介入时仍会采取的行动"}
+  ],
+  "key_item_tracks": [
+    {"item_id": "物品ID", "source_arc_id": "全书关键物品ID或空", "current_holder_id": "当前持有者", "holder_goal": "为何持有", "state": "当前状态", "event_movements": [{"event_slot_id": "槽位ID", "custody_or_state_change": "持有/损坏/激活/误读/隐藏变化", "evidence_carrier": "载体"}], "knowledge_boundary": "谁知道什么", "volume_payoff_or_carryover": "卷内回收或带出"}
+  ],
+  "set_piece_plans": [
+    {"set_piece_id": "大场面ID", "source_seed_id": "全书种子ID或空", "event_slot_ids": ["可跨多个槽位"], "build_up": [{"event_slot_id": "铺垫槽位", "development": "其他人物、势力、场地或风险如何发展"}], "parallel_fronts": ["同时发展的战线"], "spectator_arcs": ["旁观者/天骄/对手/民众的预期与受挫"], "protagonist_entry": "主角何时、为何进入；可后置", "escalation_ladder": ["逐级升级"], "aftermath": ["多实体后果"]}
+  ],
+  "transient_assets": [
+    {"asset_id": "临时资产ID", "asset_type": "character/faction/item/scene/creature/clue", "purpose": "过渡作用", "active_slot_ids": ["槽位ID"], "promotion_condition": "升级为长期资产条件", "retirement_condition": "何时退出", "residual_effect": "退出后留下的影响"}
+  ]
+}

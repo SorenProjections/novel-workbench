@@ -1,0 +1,13 @@
+prompt_key: graph4.jitCards
+version: "2.1"
+description: "JIT实例化"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_slot
+  - input_pack.block_plan
+  - input_pack.bible_content
+  - input_pack.char_content
+  - input_pack.reg_content
+  - input_pack.context_meta
+output_format: json

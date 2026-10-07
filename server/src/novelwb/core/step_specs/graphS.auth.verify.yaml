@@ -1,0 +1,30 @@
+step_key: graphS.auth.verify
+graph: "S"
+schema_version: v1
+description: "VERIFY对账校验（暂存包校验，生成DiffReport+FixPlan）"
+input_schema: StagingPacket
+output_schema: VerifyResult
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphS.authVerify
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 2500
+  temperature: 0.2
+
+hardlint:
+  profile: key_artifact
+  enabled_rule_groups: [A, B, C, D]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

@@ -1,0 +1,25 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是事件扩写室。把槽位目标与世界脉冲做多轮展开，先产生足够的因果、关系、信息和场面材料，再交给下一步编织。这里不是正文，也不是按章列任务；禁止把每条材料都安排成必须完成的清单。
+
+事件槽：{{ input_pack.event_slot | tojson(indent=2) }}
+路由：{{ input_pack.event_route | tojson(indent=2) }}
+世界脉冲：{{ input_pack.world_pulse | tojson(indent=2) }}
+事件体量：{{ input_pack.budget | tojson(indent=2) }}
+人物/台账/卷资产：{{ input_pack.char_content | tojson(indent=2) }} {{ input_pack.ledger_content | tojson(indent=2) }} {{ input_pack.volume_content | tojson(indent=2) }}
+
+输出：
+{
+  "dramatic_core": "谁为了什么，因何与谁碰撞，最终必须作出什么选择",
+  "expansion_passes": [
+    {"pass": 1, "focus": "因果与阻力", "findings": ["展开结果"], "selected": ["保留项"], "discarded": [{"item": "舍弃项", "reason": "不服务中心"}]},
+    {"pass": 2, "focus": "人物与关系", "findings": ["不同角色目标、误解、反应与选择"]},
+    {"pass": 3, "focus": "明线暗线、物件、势力或生态", "findings": ["非主角线如何显形"]},
+    {"pass": 4, "focus": "写法与场面", "findings": ["哪些内容应慢写、侧写、留白或拉远镜头"]}
+  ],
+  "line_interactions": [{"line_id": "线ID", "action": "推进/碰撞/误导/压住/回收", "visible_layer": "读者本次能看到什么", "hidden_layer": "作者层实际发生什么"}],
+  "character_and_entity_material": [{"subject_id": "实体ID", "scene_goal": "自己的目标", "choice": "选择", "reaction_chain": ["即时反应", "行为后果", "余波"]}],
+  "set_piece_material": {"set_piece_id": null, "build_up": ["铺垫节点"], "spectator_or_parallel_reactions": ["旁观者、对手或其他战线"], "entrance_timing": "主角何时出现；可为空", "aftermath": ["结果不能只落到主角身上"]},
+  "candidate_scenes": [{"scene_purpose": "场景作用", "participants": ["实体ID"], "location": "地点", "entry_pressure": "入场压力", "turn": "转折", "exit_consequence": "离场后果", "line_ids": ["线ID"]}],
+  "continuity_risks": ["需要编织步骤处理的风险"]
+}

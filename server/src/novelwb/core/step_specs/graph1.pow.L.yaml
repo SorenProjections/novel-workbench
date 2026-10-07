@@ -1,0 +1,33 @@
+step_key: graph1.pow.L
+graph: "1"
+schema_version: v1
+description: "力量定律层POW_L生成（核心守恒/代价/反制点）"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: auth_patch
+is_key_artifact: true
+
+llm:
+  prompt_key: graph1.powL
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 8000
+  temperature: 0.7
+
+hardlint:
+  profile: key_artifact
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: true
+  profiles: [mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_terms: 15
+  max_explanation_density: 0.35

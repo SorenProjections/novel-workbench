@@ -1,0 +1,33 @@
+step_key: graph1.pow.S
+graph: "1"
+schema_version: v1
+description: "力量结构层POW_S生成（源/路/阀/载体/损伤/漏洞）"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: auth_patch
+is_key_artifact: false
+
+llm:
+  prompt_key: graph1.powS
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 10000
+  temperature: 0.7
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_terms: 12
+  max_explanation_density: 0.35

@@ -1,0 +1,9 @@
+prompt_key: graph3.fatigueReport
+version: "2.0"
+description: "卷级疲劳报告"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.volume_plan_content
+  - input_pack.volume_id
+output_format: json

@@ -1,0 +1,140 @@
+# 错误码注册表 — 冻结枚举，只追加，不删改，不重编号
+# 格式: code: {http_status, message, retryable}
+
+errors:
+
+  # ── 通用 1xxx ──────────────────────────────────────────────
+  E1000:
+    http_status: 400
+    message: "请求参数无效"
+    retryable: false
+
+  E1001:
+    http_status: 404
+    message: "资源不存在"
+    retryable: false
+
+  E1002:
+    http_status: 409
+    message: "资源冲突"
+    retryable: false
+
+  # ── HardLint 2xxx ─────────────────────────────────────────
+  E2000:
+    http_status: 422
+    message: "HardLint失败：必填字段缺失"
+    retryable: true
+
+  E2001:
+    http_status: 422
+    message: "HardLint失败：JSON/YAML解析错误"
+    retryable: true
+
+  E2002:
+    http_status: 422
+    message: "HardLint失败：预算超限"
+    retryable: true
+
+  E2003:
+    http_status: 422
+    message: "HardLint失败：ID唯一性冲突"
+    retryable: true
+
+  E2004:
+    http_status: 422
+    message: "HardLint失败：引用不存在或TTL过期"
+    retryable: true
+
+  E2005:
+    http_status: 422
+    message: "HardLint失败：禁忌词/撞名/合规违规"
+    retryable: true
+
+  E2006:
+    http_status: 422
+    message: "HardLint失败：重复/注水检测"
+    retryable: true
+
+  E2007:
+    http_status: 422
+    message: "HardLint失败：章节意图不合法"
+    retryable: true
+
+  E2008:
+    http_status: 422
+    message: "HardLint失败：事件连续性字段缺失"
+    retryable: true
+
+  # ── 提交/对账 3xxx ────────────────────────────────────────
+  E3000:
+    http_status: 422
+    message: "对账失败：forbidden_delta被破"
+    retryable: true
+
+  E3001:
+    http_status: 422
+    message: "对账失败：required_debts未处理"
+    retryable: true
+
+  E3002:
+    http_status: 422
+    message: "对账失败：状态跳变缺桥段"
+    retryable: true
+
+  E3003:
+    http_status: 422
+    message: "对账失败：MomentumDebt超阈"
+    retryable: true
+
+  E3004:
+    http_status: 500
+    message: "原子提交失败：写入权威层出错"
+    retryable: false
+
+  E3005:
+    http_status: 422
+    message: "VERIFY失败：暂存包校验不通过"
+    retryable: true
+
+  # ── LLM适配器 4xxx ────────────────────────────────────────
+  E4000:
+    http_status: 502
+    message: "LLM调用失败"
+    retryable: true
+
+  E4001:
+    http_status: 429
+    message: "LLM限流"
+    retryable: true
+
+  E4002:
+    http_status: 422
+    message: "LLM输出解析失败"
+    retryable: true
+
+  # ── 规范同步 5xxx ─────────────────────────────────────────
+  E5000:
+    http_status: 500
+    message: "规范漂移：StepSpec与step_catalog不一致"
+    retryable: false
+
+  E5001:
+    http_status: 500
+    message: "规范漂移：Prompt与registry不一致"
+    retryable: false
+
+  E5002:
+    http_status: 500
+    message: "规范漂移：Schema版本不一致"
+    retryable: false
+
+  # ── 工作区 6xxx ───────────────────────────────────────────
+  E6000:
+    http_status: 500
+    message: "工作区目录结构异常"
+    retryable: false
+
+  E6001:
+    http_status: 500
+    message: "工作区写入失败（原子写入保护）"
+    retryable: false

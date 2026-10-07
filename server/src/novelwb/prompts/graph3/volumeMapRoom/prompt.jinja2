@@ -1,0 +1,71 @@
+{# graph3.volumeMapRoom v1.1 - 本卷地图与场景核心，不承担逐事件排期 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是本卷场景统筹。只深化本卷真正会使用的已开放主要区域，建立可供人物行动、冲突、对话、观察和状态变化的卷地图与场景资产。
+
+## 原则
+1. 新地点必须引用 parent_map_id，说明进入条件、移动耗时和持续状态。
+2. 地图必须结合人物：谁熟悉、谁受限、谁控制、谁会在这里暴露不同一面。
+3. 地点结构必须能影响视线、调度、追逐、隐瞒、对话和冲突结果。
+4. 本步只建立地点、路线和场景资产；scheduled_slots 可给出初步建议，下一批次步骤会逐事件完成精确排期。
+5. 场景资产是可复用的戏剧装置，不重复制造同功能地点。
+6. map_and_character_progression 本步可以为空或仅给关键节点；不要为强行覆盖全部事件而复制地点。完整覆盖由后续地图排期文件负责。
+
+## 输入
+全书长线与主要地图：{{ input_pack.longline_content | tojson(indent=2) }}
+
+卷纲：{{ input_pack.volume_plan_content | tojson(indent=2) }}
+
+卷故事核心与角色：{{ input_pack.volume_story_core | tojson(indent=2) }}
+
+上卷状态：{{ input_pack.carryover_context | default({}) | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出结构
+{
+  "volume_map_system": {
+    "active_major_map_ids": ["引用全书major_map_system中的map_id"],
+    "volume_spatial_arc": "人物如何进入、熟悉、争夺、改变或离开这些空间",
+    "locations": [
+      {
+        "location_id": "loc_稳定ID",
+        "parent_map_id": "全书主要地图ID",
+        "name": "地点名",
+        "location_type": "地点类型",
+        "access_condition": "身份、时间、事件或代价条件",
+        "travel_from_previous": "常用上一个地点、路线、耗时和风险",
+        "physical_layout": "影响行动、视线、隐瞒、对话和冲突的空间结构",
+        "social_rules": ["礼仪、禁令、权力关系或公开规则"],
+        "controlling_faction_ids": ["势力ID"],
+        "resources": ["可争夺、交易、使用或消耗的资源"],
+        "hazards": ["环境、制度、人物或能力风险"],
+        "interactive_objects": ["可操作、破坏、隐藏、误认或作为证据的物件"],
+        "sensory_identity": ["稳定而具体的感官特征"],
+        "character_connections": [{"character_id": "卷角色ID", "connection": "联系", "behavior_change_here": "在此地的不同表现"}],
+        "plot_functions": ["可承担的情节、关系、成长与伏笔功能"],
+        "scheduled_slots": ["将使用此地的事件槽ID"],
+        "start_state": "首次使用前状态",
+        "planned_state_changes": [{"event_slot_id": "槽位ID", "change": "持续变化"}],
+        "end_state": "卷末状态"
+      }
+    ],
+    "route_matrix": [{"route_id": "route_稳定ID", "from_location_id": "起点", "to_location_id": "终点", "travel_time": "耗时", "availability": "开放条件", "story_opportunities": ["途中可自然发生的互动"]}],
+    "spatial_continuity_rules": ["移动、时间、封锁、可见范围和地点状态规则"],
+    "map_and_character_progression": [{"event_slot_id": "槽位ID", "location_id": "地点ID", "character_id": "角色ID", "spatial_advantage_or_pressure": "空间优势或压力", "visible_effect": "正文中可见表现"}]
+  },
+  "scene_assets": [
+    {
+      "scene_id": "scene_稳定ID",
+      "name": "场景资产名",
+      "location_id": "所属地点ID",
+      "function": "适合承载的冲突和关系",
+      "spatial_constraints": ["限制行动的条件"],
+      "interactive_objects": ["可参与行动的物件"],
+      "sensory_palette": ["具体感官资产"],
+      "faction_pressure": "势力如何在此显形",
+      "state_changes": ["可持续保留的变化"],
+      "suggested_slots": ["适合使用的事件槽ID"]
+    }
+  ]
+}

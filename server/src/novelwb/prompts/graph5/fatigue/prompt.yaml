@@ -1,0 +1,8 @@
+prompt_key: graph5.fatigue
+version: "2.0"
+description: "章节化疲劳报告"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack
+output_format: json

@@ -1,0 +1,9 @@
+prompt_key: graph2.longlineCore
+version: "2.1"
+description: "长线骨架核心"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+output_format: json

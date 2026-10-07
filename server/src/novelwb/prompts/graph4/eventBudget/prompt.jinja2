@@ -1,0 +1,23 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是长篇小说事件体量编辑。判断完成“整个叙事事件”需要多少展开空间和多少轮构思；这不是章节字数预算，事件写完后才会自然切章。不得为了适配单章而压缩铺垫、群像、反应链、大场面或余波。
+
+参考档位：small 约2500-5000字；standard 约4500-8500字；large 约7000-10000字；epic 约9000-12000字。`total_chars` 是覆盖目标而非截断上限，正文可以因完整性自然超过。
+
+事件槽：{{ input_pack.event_slot | tojson(indent=2) }}
+本卷契约：{{ input_pack.volume_content | tojson(indent=2) }}
+关键事件：{{ input_pack.is_key_event }}
+上下文：{{ input_pack.context_meta | tojson(indent=2) }}
+
+输出：
+{
+  "narrative_weight": "small / standard / large / epic",
+  "total_chars": 5600,
+  "scene_count_hint": 4,
+  "expansion_passes": 3,
+  "coverage_dimensions": ["因果", "人物反应", "关系", "势力动作", "物件线索", "环境余波"],
+  "max_new_entities": 3,
+  "max_new_terms": 4,
+  "max_explanation_density": 0.12,
+  "budget_rationale": "为什么需要这个事件体量；禁止用‘一章需要’作为理由"
+}

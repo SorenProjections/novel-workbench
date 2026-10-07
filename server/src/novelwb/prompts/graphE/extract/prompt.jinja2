@@ -1,0 +1,174 @@
+{# graphE.extract v3.1 — Post-Event Extract（从正文抽取实际变化） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是信息抽取官、连续性管理员、质检官。你的核心职责是：仔细阅读本事件的正文草稿，与事件前状态快照对比，抽取本事件实际发生的所有状态变化。这是对账的基础数据，必须准确——不要添加正文中没有的内容，不要遗漏正文中明确发生的变化。抽取必须覆盖正文触碰到的情节卡、人物卡、场景卡、势力卡、资源变化、关系迁移、规则使用、新实体、新线头等观察维度。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：输出前必须在脑内过一遍下方硬检查清单，所有项通过后才输出
+4. 契约必填字段必须有实质内容；正文未触碰的可选更新数组必须为空，禁止用占位符或"待定"凑数
+5. changed_items 只写已经发生的变化事实；各类 `*_updates` 必须标明变化类型与计划偏差
+6. 只抽取正文中已经发生的事实；没有正文证据的内容不得写入 state_after、changed_items、new_entities 或 open_threads_update
+7. 每条变化必须标注 source_scene_id，并给出正文短引文；场景ID来自事件计划与收据，不要求正文出现内部标记。无法定位时填写"跨场景"并说明
+8. 状态快照要采用"继承 + 覆盖"原则：正文没有改变的状态沿用 pre_snapshot，不要擅自清空或改写
+9. 状态卡更新采用"触碰才更新"原则：只更新正文实际改变、确认或新增的卡；不要全量重写所有卡
+10. 如果正文首次引入重要人物、势力、场景或情节线，必须创建对应 card_updates，并在 state_after.status_cards 中加入或更新该卡
+11. 任何在正文中有具名对白、主动行为、关键反应或造成阻力的人物，都属于“被触碰人物”，必须创建或更新人物卡；不能只更新主角
+12. 势力通过成员命令、资源调动、制度限制、声望压力或公开立场实际作用于场景时，必须创建或更新势力卡；仅被随口提及则不更新
+13. 场景发生了封锁、破坏、占领、暴露、规则变化或新增可持续互动资产时，必须更新场景卡；只发生普通经过则不制造冗余卡
+14. card_updates 是字段级补丁，state_after.status_cards 是事件后的可读投影；两者必须覆盖相同的被触碰对象，不能只写投影不写补丁
+11. 所有人物状态统一写入 entity_states，以实体ID为键；不得只维护主角。location/resources/hp 等旧字段只作为兼容摘要
+12. card_updates 必须使用 create/update/retire，并提供 changed_fields、完整 card、evidence；没有正文短证据就不得生成补丁
+13. 正文发生信息获知或揭秘时，必须更新 character_knowledge，并在补丁 revealed_to 中列出实际获知者；不得把读者知识自动复制给角色
+14. 故事线、实体议程、关键物品、临时资产和大场面只按正文事实更新生命周期；计划中想发生但正文未发生的内容写入 plan_adjustment_requests，不能伪造为已发生事实
+15. 正文后的状态回写必须覆盖相关人物、势力、场景、物品、生态与时间线，不得只回写主角
+16. 如果正文实际触碰了 `plot_relationship_{relationship_id}` 关系卡，必须用稳定 relationship_id 更新 relationship_state，并对同一卡生成带正文证据的 update 补丁；不得改用角色姓名另建重复关系卡，也不得把计划中的关系变化伪造成已发生事实
+
+## 上下文编译追踪
+
+{{ input_pack.context_meta | tojson(indent=2) }}
+
+## 事件ID
+
+{{ input_pack.event_id }}
+
+## 事件前状态快照（PreSnapshot）
+
+{{ input_pack.pre_snapshot | tojson(indent=2) }}
+
+## 事件正文草稿
+
+{{ input_pack.draft_text }}
+
+## 增量输出规则与硬检查
+
+1. 根节点必须严格符合下方 `ObservedDelta` 结构；不要输出 `change_list`、`entity_changes`、`new_threads`、`extraction_warnings` 等契约外字段。
+2. `state_after` 必须是对象，`result_state_summary` 必须是非空字符串；`new_entities` 只能是字符串数组，不能放对象。
+3. `state_after` 的字典字段只输出本事件新增或覆盖的键；后端会与 `pre_snapshot` 做“继承 + 覆盖”。没有变化的字段可省略或输出空对象。
+4. `ability_boundary/open_threads/timeline_events` 只输出本事件新增项，后端会去重追加；`reading_focus` 如需变化则输出事件后的完整当前列表。
+5. `status_cards` 只输出正文实际触碰的卡；`card_updates` 必须对同一批卡给出字段级补丁、正文证据和稳定 `card_id`。禁止重抄未触碰卡。
+6. 只记录正文已经发生的事实。每条故事线、议程、资产和时间线更新都必须带 `source_scene_id` 与两句以内的 `evidence_quote`。
+7. 正文首次引入的重要人物、势力、地点、物品或规则才进入 `new_entities`/卡片补丁；随口提及不制造冗余实体。
+8. 正文中有具名对白、主动行为、关键反应或造成阻力的人物必须更新人物卡；实际施加命令、资源或制度压力的势力必须更新势力卡。
+9. 计划目标、设定推测和作者意图不得写成已发生事实；与计划的偏差只写入 `plan_adjustment_requests`。
+10. 输出前确认 JSON 完整闭合，所有枚举值使用下方给定的英文值。
+
+## 只返回以下 JSON
+
+{
+  "state_after": {
+    "snapshot_key": "post_{{ input_pack.event_id }}",
+    "event_id": "{{ input_pack.event_id }}",
+    "location": "事件结束时主角所在地点；无变化可省略",
+    "time_in_story": "事件结束时故事时间；无变化可省略",
+    "resources": {},
+    "hp": {},
+    "ability_boundary": ["本事件新确认的能力边界"],
+    "relationship_state": {},
+    "entity_states": {
+      "稳定实体ID": {
+        "name": "角色名",
+        "role": "主角/队友/对手/旁观者",
+        "location": "可确认地点",
+        "hp": "可确认身体状态",
+        "resources": {},
+        "ability_boundary": [],
+        "state_summary": "正文证据支持的事件后状态"
+      }
+    },
+    "narrative_line_states": {},
+    "entity_agendas": {},
+    "asset_states": {},
+    "timeline_events": [
+      {
+        "time": "故事内时间",
+        "location": "地点",
+        "actor_ids": ["实体ID"],
+        "event": "已发生事实",
+        "evidence": "正文短引文"
+      }
+    ],
+    "open_threads": ["本事件新增的未解决线程"],
+    "result_state_summary": "事件后状态的一句话总结",
+    "reading_focus": [],
+    "status_cards": {
+      "plot_cards": [],
+      "character_cards": [],
+      "scene_cards": [],
+      "faction_cards": [],
+      "item_cards": [],
+      "rule_cards": []
+    }
+  },
+  "changed_items": ["发生变化的具体事实"],
+  "new_entities": ["稳定实体ID：名称与一句话身份"],
+  "renamed_entities": [],
+  "retired_entities": [],
+  "has_bridge_segment": false,
+  "result_state_summary": "与 state_after.result_state_summary 一致的非空总结",
+  "open_threads_update": ["本事件新增的开放线程"],
+  "momentum_debt_delta": 0,
+  "card_updates": {
+    "plot_cards": [],
+    "character_cards": [
+      {
+        "patch_id": "patch_稳定卡ID",
+        "operation": "create 或 update 或 retire",
+        "card_id": "稳定卡ID",
+        "card_type": "character",
+        "changed_fields": ["current_state"],
+        "card": {
+          "card_id": "稳定卡ID",
+          "card_type": "character",
+          "card_name": "角色名",
+          "subject_id": "稳定实体ID",
+          "summary": "后续阅读所需摘要",
+          "current_state": "事件后事实状态",
+          "constraints": [],
+          "reader_needs": [],
+          "reader_knowledge": [],
+          "character_knowledge": {},
+          "open_questions": [],
+          "source_refs": [
+            {
+              "authority": "EVENT",
+              "event_id": "{{ input_pack.event_id }}",
+              "path": "场景ID",
+              "evidence": "正文短引文"
+            }
+          ],
+          "source_version": 1,
+          "last_touched_event_id": "{{ input_pack.event_id }}",
+          "revelation_gate": null,
+          "attributes": {}
+        },
+        "evidence": ["场景ID：正文短证据"],
+        "revealed_to": [],
+        "base_version": null,
+        "new_version": 1
+      }
+    ],
+    "scene_cards": [],
+    "faction_cards": [],
+    "item_cards": [],
+    "rule_cards": []
+  },
+  "narrative_line_updates": [
+    {
+      "line_id": "故事线ID",
+      "operation": "advance/collide/misdirect/hold/payoff/dormant/retire",
+      "before": "事件前状态",
+      "after": "正文后状态",
+      "source_scene_id": "场景ID",
+      "evidence_quote": "正文短引文"
+    }
+  ],
+  "entity_agenda_updates": [],
+  "asset_lifecycle_updates": [],
+  "timeline_updates": [],
+  "plan_adjustment_requests": []
+}

@@ -1,0 +1,292 @@
+prompts:
+  # ── 图1：舞台引擎 ──────────────────────────────────────────
+  - prompt_key: graph1.spec00
+    prompt_version: "2.2"
+    schema_name: AuthObject
+    path: graph1/spec00
+    description: "#00规格与契约基线"
+
+  - prompt_key: graph1.worldA
+    prompt_version: "2.1"
+    schema_name: AuthObject
+    path: graph1/worldA
+    description: "世界A层硬锚"
+
+  - prompt_key: graph1.worldB
+    prompt_version: "2.1"
+    schema_name: AuthObject
+    path: graph1/worldB
+    description: "世界B层宏观生态"
+
+  - prompt_key: graph1.oppEco
+    prompt_version: "2.1"
+    schema_name: AuthObject
+    path: graph1/oppEco
+    description: "对手生态OppEco"
+
+  - prompt_key: graph1.castCore
+    prompt_version: "1.1"
+    schema_name: AuthObject
+    path: graph1/castCore
+    description: "核心角色阵容、关系与知识边界"
+
+  - prompt_key: graph1.castRoster
+    prompt_version: "1.0"
+    schema_name: AuthObject
+    path: graph1/castRoster
+    description: "核心角色阵容索引"
+
+  - prompt_key: graph1.castDossier
+    prompt_version: "1.0"
+    schema_name: AuthObject
+    path: graph1/castDossier
+    description: "单个核心角色详细档案"
+
+  - prompt_key: graph1.castRelations
+    prompt_version: "1.0"
+    schema_name: AuthObject
+    path: graph1/castRelations
+    description: "核心角色关系、知识边界与群像平衡"
+
+  - prompt_key: graph1.powL
+    prompt_version: "2.0"
+    schema_name: AuthObject
+    path: graph1/powL
+    description: "力量定律层POW_L"
+
+  - prompt_key: graph1.powS
+    prompt_version: "2.0"
+    schema_name: AuthObject
+    path: graph1/powS
+    description: "力量结构层POW_S"
+
+  - prompt_key: graph1.powE
+    prompt_version: "2.1"
+    schema_name: AuthObject
+    path: graph1/powE
+    description: "力量表现层POW_E"
+
+  - prompt_key: graph1.bibleLint
+    prompt_version: "2.0"
+    schema_name: RunManifest
+    path: graph1/bibleLint
+    description: "BIBLE全量Lint"
+
+  # ── 图2：长线骨架 ──────────────────────────────────────────
+  - prompt_key: graph2.longlineCore
+    prompt_version: "2.1"
+    schema_name: AuthObject
+    path: graph2/longlineCore
+    description: "长线骨架核心"
+
+  - prompt_key: graph2.storyRoom
+    prompt_version: "3.0"
+    schema_name: AuthObject
+    path: graph2/storyRoom
+    description: "全书故事核心深化"
+
+  - prompt_key: graph2.storyField
+    prompt_version: "1.0"
+    schema_name: AuthObject
+    path: graph2/storyField
+    description: "全书StoryRoom单逻辑文件生成"
+
+  - prompt_key: graph2.mapRoom
+    prompt_version: "1.0"
+    schema_name: AuthObject
+    path: graph2/mapRoom
+    description: "全书主要地图深化"
+
+  # ── 图3：分卷层 ────────────────────────────────────────────
+  - prompt_key: graph3.volumePlan
+    prompt_version: "2.2"
+    schema_name: VolumeContract
+    path: graph3/volumePlan
+    description: "分卷规划"
+
+  - prompt_key: graph3.volumeStoryRoom
+    prompt_version: "3.0"
+    schema_name: VolumeContract
+    path: graph3/volumeStoryRoom
+    description: "本卷故事核心深化"
+
+  - prompt_key: graph3.volumeMapRoom
+    prompt_version: "1.1"
+    schema_name: VolumeContract
+    path: graph3/volumeMapRoom
+    description: "本卷地图与场景深化"
+
+  - prompt_key: graph3.volumeMapSchedule
+    prompt_version: "1.0"
+    schema_name: VolumeContract
+    path: graph3/volumeMapSchedule
+    description: "本卷地图逐事件排期"
+
+  - prompt_key: graph3.volumeEventDesigns
+    prompt_version: "2.0"
+    schema_name: VolumeContract
+    path: graph3/volumeEventDesigns
+    description: "本卷逐事件设计与资产引用"
+
+  - prompt_key: graph3.fatigueReport
+    prompt_version: "2.0"
+    schema_name: FatigueReport
+    path: graph3/fatigueReport
+    description: "卷级疲劳报告"
+
+  # ── 图4：事件执行 ──────────────────────────────────────────
+  - prompt_key: graph4.eventBudget
+    prompt_version: "3.0"
+    schema_name: RunManifest
+    path: graph4/eventBudget
+    description: "事件预算"
+
+  - prompt_key: graph4.eventRoute
+    prompt_version: "1.0"
+    schema_name: EventSlot
+    path: graph4/eventRoute
+    description: "事件动态路由"
+
+  - prompt_key: graph4.worldPulse
+    prompt_version: "1.0"
+    schema_name: EventSlot
+    path: graph4/worldPulse
+    description: "世界脉冲推演"
+
+  - prompt_key: graph4.eventExpand
+    prompt_version: "1.0"
+    schema_name: EventSlot
+    path: graph4/eventExpand
+    description: "事件多轮展开"
+
+  - prompt_key: graph4.prewriteCheck
+    prompt_version: "1.1"
+    schema_name: VerifyResult
+    path: graph4/prewriteCheck
+    description: "正文前检查"
+
+  - prompt_key: graph4.needFactRag
+    prompt_version: "2.0"
+    schema_name: RunManifest
+    path: graph4/needFactRag
+    description: "RAG需求判断"
+
+  - prompt_key: graph4.eventPlan
+    prompt_version: "3.1"
+    schema_name: EventSlot
+    path: graph4/eventPlan
+    description: "事件细化"
+
+  - prompt_key: graph4.jitCards
+    prompt_version: "2.1"
+    schema_name: RunManifest
+    path: graph4/jitCards
+    description: "JIT实例化"
+
+  - prompt_key: graph4.namecheck
+    prompt_version: "2.0"
+    schema_name: RunManifest
+    path: graph4/namecheck
+    description: "命名去重"
+
+  - prompt_key: graph4.blocksWrite
+    prompt_version: "3.1"
+    schema_name: EventDraft
+    path: graph4/blocksWrite
+    description: "正文块生成"
+
+  # ── 图E：事件提交 ──────────────────────────────────────────
+  - prompt_key: graphE.presnapshot
+    prompt_version: "2.0"
+    schema_name: StateSnapshot
+    path: graphE/presnapshot
+    description: "PreSnapshot构建"
+
+  - prompt_key: graphE.extract
+    prompt_version: "3.1"
+    schema_name: ObservedDelta
+    path: graphE/extract
+    description: "Post-Event Extract"
+
+  - prompt_key: graphE.reconcile
+    prompt_version: "3.0"
+    schema_name: DiffReport
+    path: graphE/reconcile
+    description: "Reconcile对账"
+
+  - prompt_key: graphE.fix
+    prompt_version: "3.0"
+    schema_name: EventDraft
+    path: graphE/fix
+    description: "分级修复"
+
+  - prompt_key: graphE.commit
+    prompt_version: "2.0"
+    schema_name: CommitReceipt
+    path: graphE/commit
+    description: "事件原子提交"
+
+  # ── 图P：章节许可 ──────────────────────────────────────────
+  - prompt_key: graphP.chapterLicense
+    prompt_version: "2.0"
+    schema_name: ChapterSpec
+    path: graphP/chapterLicense
+    description: "CHAPTER_LICENSE"
+
+  # ── 图5：章后置 ────────────────────────────────────────────
+  - prompt_key: graph5.chapterizeCut
+    prompt_version: "3.0"
+    schema_name: ChapterSpec
+    path: graph5/chapterizeCut
+    description: "章节化方案生成"
+
+  - prompt_key: graph5.chapterizeReview
+    prompt_version: "3.0"
+    schema_name: VerifyResult
+    path: graph5/chapterizeReview
+    description: "章级评审"
+
+  - prompt_key: graph5.fatigue
+    prompt_version: "2.0"
+    schema_name: FatigueReport
+    path: graph5/fatigue
+    description: "章节化疲劳报告"
+
+  - prompt_key: graph5.chapterCommit
+    prompt_version: "2.0"
+    schema_name: CommitReceipt
+    path: graph5/chapterCommit
+    description: "CHAPTER_COMMIT"
+
+  # ── 图S：权威提交 ──────────────────────────────────────────
+  - prompt_key: graphS.authVerify
+    prompt_version: "2.0"
+    schema_name: VerifyResult
+    path: graphS/authVerify
+    description: "AUTH VERIFY"
+
+  - prompt_key: graphS.authCommit
+    prompt_version: "2.0"
+    schema_name: CommitReceipt
+    path: graphS/authCommit
+    description: "AUTH COMMIT"
+
+  # ── 图R：人工审核定向修订 ─────────────────────────────────
+  - prompt_key: graphR.workflow.audit
+    prompt_version: "1.1"
+    schema_name: ReviewAuditResult
+    path: graphR/workflowAudit
+    description: "独立审核当前暂存稿并生成可执行修改意见"
+
+  - prompt_key: graphR.workflow.revise
+    prompt_version: "1.0"
+    schema_name: ReviewRevisionResult
+    path: graphR/workflowRevise
+    description: "依据审核意见定向修订当前暂存稿"
+
+  # ── 图6：回归测试 ──────────────────────────────────────────
+  - prompt_key: graph6.regressionRun
+    prompt_version: "2.0"
+    schema_name: RunManifest
+    path: graph6/regressionRun
+    description: "回归测试执行"

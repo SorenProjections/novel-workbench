@@ -1,0 +1,207 @@
+# step_key 清单 — 冻结枚举，只追加，不删改
+# 每个 step_key 对应一个 StepSpec YAML 文件
+
+steps:
+
+  # ── 图1：舞台引擎 ──────────────────────────────────────────
+  - key: graph1.stage.spec00
+    graph: "1"
+    description: "#00 规格与契约基线生成"
+
+  - key: graph1.world.A
+    graph: "1"
+    description: "世界A层硬锚生成"
+
+  - key: graph1.world.B
+    graph: "1"
+    description: "世界B层宏观生态生成"
+
+  - key: graph1.opp.eco
+    graph: "1"
+    description: "对手生态OppEco生成"
+
+  - key: graph1.cast.core
+    graph: "1"
+    description: "核心角色阵容、关系与知识边界"
+
+  - key: graph1.cast.roster
+    graph: "1"
+    description: "核心角色阵容索引"
+
+  - key: graph1.cast.dossier
+    graph: "1"
+    description: "单个核心角色详细档案"
+
+  - key: graph1.cast.relations
+    graph: "1"
+    description: "核心角色关系、知识边界与群像平衡"
+
+  - key: graph1.pow.L
+    graph: "1"
+    description: "力量定律层POW_L生成"
+
+  - key: graph1.pow.S
+    graph: "1"
+    description: "力量结构层POW_S生成"
+
+  - key: graph1.pow.E
+    graph: "1"
+    description: "力量表现层POW_E生成"
+
+  - key: graph1.bible.lint
+    graph: "1"
+    description: "BIBLE全量Lint集中检查"
+
+  # ── 图2：长线骨架 ──────────────────────────────────────────
+  - key: graph2.longline.core
+    graph: "2"
+    description: "长线骨架生成（DQ/阶段/动量债/意象轨迹）"
+
+  - key: graph2.story.room
+    graph: "2"
+    description: "全书故事室深化（总纲/主要伏笔/角色成长线/群像关系）"
+
+  - key: graph2.story.field
+    graph: "2"
+    description: "全书StoryRoom单逻辑文件生成与审核"
+
+  - key: graph2.map.room
+    graph: "2"
+    description: "全书主要地图深化（区域/路线/势力/人物联系）"
+
+  # ── 图3：分卷层 ────────────────────────────────────────────
+  - key: graph3.volume.plan
+    graph: "3"
+    description: "分卷规划（卷契约/事件槽位/Sequence）"
+
+  - key: graph3.volume.story_room
+    graph: "3"
+    description: "本卷故事核心深化（卷伏笔/角色成长线/多维角色卡）"
+
+  - key: graph3.volume.map_room
+    graph: "3"
+    description: "本卷地图与场景深化"
+
+  - key: graph3.volume.map_schedule
+    graph: "3"
+    description: "本卷地图逐事件排期"
+
+  - key: graph3.volume.event_designs
+    graph: "3"
+    description: "本卷逐事件设计与资产引用"
+
+  - key: graph3.volume.fatigue_report
+    graph: "3"
+    description: "卷级疲劳报告生成"
+
+  # ── 图4：事件执行 ──────────────────────────────────────────
+  - key: graph4.event.budget
+    graph: "4"
+    description: "事件预算（常规/关键分流）"
+
+  - key: graph4.event.route
+    graph: "4"
+    description: "事件动态阅读与展开路由"
+
+  - key: graph4.event.world_pulse
+    graph: "4"
+    description: "人物、势力、物件与生态自主行动推演"
+
+  - key: graph4.event.expand
+    graph: "4"
+    description: "事件因果、人物、多线与场面多轮展开"
+
+  - key: graph4.event.prewrite_check
+    graph: "4"
+    description: "正文前一致性与清单化风险检查"
+
+  - key: graph4.event.need_fact_rag
+    graph: "4"
+    description: "真值细节需求判断（RAG触发点，当前跳过）"
+
+  - key: graph4.event.plan
+    graph: "4"
+    description: "事件细化（block_plan/delta规格）"
+
+  - key: graph4.event.jit_cards
+    graph: "4"
+    description: "JIT实例化（新增要素短卡/淘汰清单）"
+
+  - key: graph4.event.namecheck
+    graph: "4"
+    description: "命名去重检查（NAMECHECK，当前跳过）"
+
+  - key: graph4.event.blocks.write
+    graph: "4"
+    description: "正文块生成（断网，按blocks顺序）"
+
+  # ── 图R：RAG（当前跳过）──────────────────────────────────
+  - key: graphR.material.rag
+    graph: "R"
+    description: "RAG素材卡生成（当前版本不实现）"
+
+  # ── 图E：事件提交 ──────────────────────────────────────────
+  - key: graphE.event.presnapshot.build
+    graph: "E"
+    description: "Pre-Event Snapshot构建"
+
+  - key: graphE.event.extract
+    graph: "E"
+    description: "Post-Event Extract（抽取器）"
+
+  - key: graphE.event.reconcile
+    graph: "E"
+    description: "多实体、故事线与资产生命周期Reconcile对账"
+
+  - key: graphE.event.fix
+    graph: "E"
+    description: "无标记连续正文的锚点/场景级分级修复"
+
+  - key: graphE.event.commit
+    graph: "E"
+    description: "事件原子提交"
+
+  # ── 图P：章节许可 ──────────────────────────────────────────
+  - key: graphP.chapter.license
+    graph: "P"
+    description: "CHAPTER_LICENSE（Intent→deliverables→台账补丁）"
+
+  # ── 图5：章后置 ────────────────────────────────────────────
+  - key: graph5.chapterize.cut
+    graph: "5"
+    description: "章节化方案生成（cut_plan）"
+
+  - key: graph5.chapterize.review
+    graph: "5"
+    description: "章级评审（双Rubric）"
+
+  - key: graph5.chapter.fatigue_report
+    graph: "5"
+    description: "章节化疲劳报告"
+
+  - key: graph5.chapter.commit
+    graph: "5"
+    description: "CHAPTER_COMMIT Phase-2提交"
+
+  # ── 图S：权威提交 ──────────────────────────────────────────
+  - key: graphS.auth.verify
+    graph: "S"
+    description: "VERIFY对账校验"
+
+  - key: graphS.auth.commit
+    graph: "S"
+    description: "ATOMIC COMMIT原子提交"
+
+  # ── 图6：回归测试 ──────────────────────────────────────────
+  - key: graph6.regression.run
+    graph: "6"
+    description: "回归测试执行（语感/机制/事件边界/章节化）"
+
+  # ── 图R：人工审核定向修订 ─────────────────────────────────
+  - key: graphR.workflow.audit
+    graph: "R"
+    description: "独立审核当前暂存稿并生成可执行修改意见"
+
+  - key: graphR.workflow.revise
+    graph: "R"
+    description: "依据人工审核意见在当前暂存稿基础上定向修订"

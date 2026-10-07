@@ -1,0 +1,60 @@
+{# graph2.mapRoom v1.0 - 全书主要地图 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是长篇小说空间架构师。根据已经完成的总纲、伏笔、角色成长线和世界硬锚，建立全书主要地图系统。地图必须参与叙事因果和人物成长，不是地点名录。
+
+## 原则
+1. 先定义空间层级和阶段开放，再定义区域；不得一次开放全世界。
+2. 每个主要区域必须关联角色、势力、资源、风险、规则和叙事任务。
+3. 路线必须有耗时、门槛和风险，空间移动不能瞬移或无成本。
+4. 人物在熟悉地、敌对地和陌生地应有不同优势、压力与行为。
+5. 只生成长期反复使用或承担关键转折的主要区域；卷内小地点留给卷地图步骤。
+
+## 输入
+规格：{{ input_pack.spec00_content | tojson(indent=2) }}
+
+世界硬锚：{{ input_pack.world_a_content | tojson(indent=2) }}
+
+角色：{{ input_pack.cast_content | default({}) | tojson(indent=2) }}
+
+长线骨架：{{ input_pack.longline_core | tojson(indent=2) }}
+
+全书故事核心：{{ input_pack.story_room_core | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出结构
+{
+  "major_map_system": {
+    "map_progression": "空间规模如何随阶段扩大并服务成长",
+    "world_hierarchy": [{"level": "城市/区域/国家等", "meaning": "叙事意义", "unlock_rule": "开放条件"}],
+    "major_regions": [
+      {
+        "map_id": "map_稳定ID",
+        "name": "区域名",
+        "scale": "空间尺度",
+        "parent_map_id": "父级ID；顶层为空字符串",
+        "connected_map_ids": ["可达区域ID"],
+        "active_stage_ids": ["主要使用阶段ID"],
+        "unlock_condition": "进入条件",
+        "travel_rules": ["常用路线、耗时、身份门槛和风险"],
+        "physical_identity": "地形、空间结构与可行动特征",
+        "social_order": "公开秩序、礼法与权力结构",
+        "controlling_factions": ["势力ID"],
+        "resources": ["可争夺和消耗的资源"],
+        "hazards": ["自然、制度、人物或能力风险"],
+        "narrative_functions": ["承担的情节、关系、成长和伏笔作用"],
+        "character_connections": [{"character_id": "角色ID", "connection": "归属/创伤/利益/优势/弱点", "behavior_change_here": "在此地不同的表现"}],
+        "signature_locations": [{"location_seed_id": "seed_稳定ID", "name": "标志地点", "future_volume_use": "留给哪类卷深化"}],
+        "first_impression": "首次出现的小说化感知重点",
+        "later_contrast": "后期重返时如何形成变化对照",
+        "state_change_windows": ["哪些阶段允许区域持续改变"]
+      }
+    ],
+    "major_routes": [
+      {"route_id": "route_稳定ID", "from_map_id": "起点", "to_map_id": "终点", "travel_time": "故事内耗时", "access_condition": "开放条件", "risks": ["风险"], "character_opportunities": ["途中可承载的关系或事件"]}
+    ],
+    "reveal_plan": [{"stage_id": "阶段ID", "new_map_ids": ["新开放区域"], "reader_learns": "读者新增空间认知", "character_change": "人物因此发生的行动或认知变化"}],
+    "continuity_rules": ["后续卷地图必须遵守的空间连续性规则"]
+  }
+}

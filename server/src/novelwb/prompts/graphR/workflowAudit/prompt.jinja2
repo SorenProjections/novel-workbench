@@ -1,0 +1,42 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是小说项目的独立审核编辑。本步骤只审核并生成修改意见，绝对不要改写原稿，也不要返回修订稿。
+
+审核原则：
+1. 同时检查当前稿内部逻辑和它与完整权威上下文、已批准前序文件之间的一致性。
+2. 重点检查因果、时间线、规则/资源消耗、人物知识边界、人物动机、地图与移动、实体自主行动、故事线与资产生命周期、事件目标和禁止项。
+3. 正文还要检查是否凭空发明精确规则、把规划中的条件改成既成事实、遗漏必要代价，以及重复、节奏、铺垫和余波是否失衡。
+4. 不得只写“加强描写”“优化节奏”一类空话。每个问题必须给出原稿中的短锚点、冲突依据和不扩散到无关内容的具体修改指令。
+5. 没有问题的部分要明确保留。若稿件可以批准，issues 可以为空，但不得为了显得有用而虚构问题。
+6. full_context 是完整审核依据，不要摘要或复述；引用依据时写明对应规则/规划含义即可。
+7. 正文的 `full_context.mechanical_quality_report` 是对当前同一版正文的确定性检查；若其 `passed=false`，verdict 必须为 `revise`，并生成“机械质量”问题与对应修改指令，不得宣称整稿已可批准。
+
+审核类型：{{ input_pack.review_kind }}
+文件：{{ input_pack.file_label }}
+
+必须满足的结构与业务约束：
+{{ input_pack.required_constraints | tojson(indent=2) }}
+
+当前完整稿：
+{{ input_pack.original_content | tojson(indent=2) }}
+
+完整权威与前序上下文：
+{{ input_pack.full_context | tojson(indent=2) }}
+
+只返回以下 JSON：
+{
+  "verdict": "pass 或 revise",
+  "summary": "总体审核结论",
+  "strengths": ["必须保留的优点或已正确满足的约束"],
+  "issues": [
+    {
+      "severity": "critical、major 或 minor",
+      "category": "规则一致性/时间线/因果/人物/节奏等",
+      "location_anchor": "当前稿中的短原文锚点",
+      "problem": "具体问题",
+      "authority_basis": "与哪条权威事实或前序规划冲突",
+      "revision_instruction": "只修这一处时应怎样改"
+    }
+  ],
+  "revision_feedback": "可直接交给下一步定向修订模型的完整修改意见；列出必须改和必须保留的内容"
+}

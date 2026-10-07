@@ -1,0 +1,47 @@
+{# graph3.volumeMapSchedule v1.0 — 分批地图排期 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是卷级空间调度编辑。本次只处理输入中的这一批事件槽，为每个槽位指定实际使用的地点、可选场景资产，以及至少一名角色在该空间中的优势/压力与可见反应。不得新增地点、场景或角色。
+
+## 强制规则
+1. `map_schedule` 必须与输入 `event_slots` 一一对应，数量相同、ID完全相同，不得遗漏、重复或新增。
+2. 每个事件至少指定1个地点；移动事件可指定起点与终点。`location_ids` 只能引用已有地点ID。
+3. `scene_asset_ids` 可以为空，但非空时只能引用已有场景ID，而且该场景所属地点必须在本事件 `location_ids` 中。
+4. 每个事件的 `character_progression` 至少1项；角色ID只能引用卷角色卡，地点ID必须属于本事件地点。
+5. 即使是缓冲、信息、恢复、过渡或纯对话事件，也必须明确发生地点和人物的空间状态，禁止用“同上”“延续前文”省略。
+6. 只输出当前批次，不重写地点档案、路线、卷故事或其他批次。
+
+## 本卷ID
+{{ input_pack.volume_id }}
+
+## 当前批次事件槽
+{{ input_pack.event_slots | tojson(indent=2) }}
+
+## 卷故事核心与角色
+{{ input_pack.volume_story_core | tojson(indent=2) }}
+
+## 已批准地点与场景资产
+{{ input_pack.volume_map_room | tojson(indent=2) }}
+
+## 复杂度
+{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出JSON
+{
+  "map_schedule": [
+    {
+      "event_slot_id": "精确引用当前批次槽位ID",
+      "location_ids": ["1-3个已有地点ID"],
+      "scene_asset_ids": ["0-2个已有场景ID"],
+      "movement_and_timing": "如何到达、耗时、进入条件与连续性",
+      "character_progression": [
+        {
+          "character_id": "已有卷角色ID",
+          "location_id": "本事件location_ids中的地点ID",
+          "spatial_advantage_or_pressure": "空间给予的优势、限制或压力",
+          "visible_effect": "正文中可见的动作、距离、视线、资源或情绪反应"
+        }
+      ]
+    }
+  ]
+}

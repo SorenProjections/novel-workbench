@@ -1,0 +1,29 @@
+step_key: graphS.auth.commit
+graph: "S"
+schema_version: v1
+description: "ATOMIC COMMIT原子提交（一次性写入对应权威对象+版本号+索引）"
+input_schema: AtomicCommitSpec
+output_schema: CommitReceipt
+commit_type: auth_patch
+is_key_artifact: false
+
+llm:
+  prompt_key: graphS.authCommit
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 500
+  temperature: 0.1
+
+hardlint:
+  profile: key_artifact
+  enabled_rule_groups: [A, C]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

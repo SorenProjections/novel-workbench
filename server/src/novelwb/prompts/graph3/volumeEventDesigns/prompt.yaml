@@ -1,0 +1,12 @@
+prompt_key: graph3.volumeEventDesigns
+version: "2.0"
+description: "本卷逐事件中心、动态路由与按需资产引用"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.longline_content
+  - input_pack.volume_plan_content
+  - input_pack.volume_story_core
+  - input_pack.volume_map_room
+  - input_pack.complexity_profile
+output_format: json

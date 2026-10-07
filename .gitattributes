@@ -1,0 +1,6 @@
+# 与 .editorconfig 一致，文本在仓库中统一使用 LF。
+* text=auto eol=lf
+
+# Windows 命令脚本保留 CRLF。
+*.bat text eol=crlf
+*.cmd text eol=crlf

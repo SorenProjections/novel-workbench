@@ -1,0 +1,11 @@
+prompt_key: graphE.extract
+version: "3.1"
+description: "Post-Event Extract"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_id
+  - input_pack.pre_snapshot
+  - input_pack.draft_text
+  - input_pack.context_meta
+output_format: json

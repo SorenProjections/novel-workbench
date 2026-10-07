@@ -1,0 +1,29 @@
+step_key: graph5.chapter.commit
+graph: "5"
+schema_version: v1
+description: "CHAPTER_COMMIT Phase-2（写发布层+章级台账，不改事件因果源）"
+input_schema: StagingPacket
+output_schema: CommitReceipt
+commit_type: chapter
+is_key_artifact: false
+
+llm:
+  prompt_key: graph5.chapterCommit
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 500
+  temperature: 0.1
+
+hardlint:
+  profile: chapterize
+  enabled_rule_groups: [A, C, F]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

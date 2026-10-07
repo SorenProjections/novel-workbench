@@ -1,0 +1,125 @@
+{# graphE.reconcile v2.0 — Reconcile对账（深度规则检查 + 修复方案） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是对账官、质检官、修复策略制定者。你的核心职责是：对事件草稿进行深度对账检查——对比事件前快照和提取到的变化，判断是否存在规则违反、状态跳变、动量债溢出等问题。你的检查结果将决定这一事件是否能通过审核入库。如果不通过，你必须给出具体的分级修复方案，让写作者知道如何以最小代价修复问题。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：发现任何以下问题立即标记为不通过，不允许通融
+4. 所有字段必须有实质内容，如果某项无问题则填写"无"，不允许留空
+5. 每个不通过项必须给出正文证据、状态证据或缺失证据；不能只写判断结论
+6. fix_level_suggested 只能是 null、"L0"、"L1"、"L2" 四种之一
+7. patch_instructions 必须是写作者能直接执行的最小修复动作，不能写"优化节奏"、"加强描写"这类空话
+8. 如果 ObservedDelta 声称发生变化但正文证据不足，优先标为 unbridged_state_jump 或 soft_defects，不要默认通过
+9. status_cards、card_updates、故事线、实体议程和资产生命周期更新必须遵守"正文触碰才更新"原则；无证据新增、删除或改写视为状态跳变
+10. context_fingerprint 必须与本次 context_meta.fingerprint 一致；发现模型使用未加载设定时，记入 rule_drift
+11. 检查 character_knowledge 与 revelation_gate：角色越权知情、前置伏笔不足或提前揭秘，记入 unbridged_state_jump 并判定不通过
+
+## 上下文编译追踪
+
+{{ input_pack.context_meta | tojson(indent=2) }}
+
+## 事件ID
+
+{{ input_pack.event_id }}
+
+## 事件正文草稿
+
+{{ input_pack.draft_text }}
+
+## 事件前快照（PreSnapshot）
+
+{{ input_pack.pre_snapshot | tojson(indent=2) }}
+
+## 实际变化（ObservedDelta）
+
+{{ input_pack.observed_delta | tojson(indent=2) }}
+
+## 对账检查项目（硬性不通过条件）
+
+1. **violated_forbidden**：正文中是否使用了BIBLE中的禁忌词或违反了力量定律——任何一条即不通过
+2. **unbridged_state_jump**：主角或重要NPC的状态是否出现了无合理过渡的跳变——任何一条即不通过
+3. **missing_due_debts**：是否有已到期（超过15事件）的台账债务没有在本事件中处理——任何一条即不通过
+4. **name_collision**：是否出现了与已有实体混淆的新命名——任何一条即不通过
+5. **rule_drift**：力量系统的使用是否符合已建立的定律和结构规则——任何一条即不通过
+6. **momentum_overflow**：动量债是否超过上限——超过即不通过
+7. **card_update_drift**：情节卡、人物卡、场景卡、势力卡是否被无证据改写、全量重写或遗漏关键正文变化——严重者不通过
+8. **knowledge_boundary_drift**：角色是否说出 blind_spots 中的内容，或在无获知证据时新增 known_facts——任何一条即不通过
+9. **revelation_gate_drift**：揭秘是否满足前置事实、伏笔和允许知情者——任何一条即不通过
+
+## 修复等级选择
+
+- L0：边界补丁。只需要在正文锚点附近补一小段过渡、代价、证据或延期解释。
+- L1：局部回滚。需要重写一到两个场景或连续文本范围，才能移除违规变化或补足缺失债务。
+- L2：整事件回滚。事件目标、关键转折或结果态本身越界，局部修补会继续污染权威层。
+
+优先选择能解决问题的最低等级；不要为了稳妥滥用 L2。
+
+## 输出JSON结构与字段说明
+
+{
+  "event_id": "{{ input_pack.event_id }}",
+  "run_id": "{{ input_pack.run_id }}",
+  "violated_forbidden": ["违反禁忌的具体描述（如有）"],
+  "missing_due_debts": ["未处理的到期债务（如有）"],
+  "unbridged_state_jump": ["无过渡的状态跳变（如有），要引用具体正文片段"],
+  "name_collision": ["命名冲突（如有）"],
+  "rule_drift": ["规则漂移描述（如有）"],
+  "momentum_overflow": false,
+  "passed": true,
+  "fix_level_suggested": null,
+  "patch_instructions": ["如果不通过，给出带正文短锚点或场景ID的最小修复指令，例如：在‘他抬起右臂’之后补出旧伤反噬及停止追击的因果"],
+  "soft_defects": ["不影响通过但建议改进的问题"],
+  "evidence_table": [
+    {
+      "issue_type": "禁忌违规 / 到期债务缺失 / 状态跳变 / 命名冲突 / 规则漂移 / 动量债溢出 / 软缺陷",
+      "source_scene_id": "s002或跨场景",
+      "evidence_quote": "正文证据或缺失说明，不超过两句",
+      "why_it_matters": "为什么这会影响连续性、权威层或读者理解",
+      "minimal_fix": "最小修复动作"
+    }
+  ],
+  "card_update_audit": [
+    {
+      "card_type": "情节卡 / 人物卡 / 场景卡 / 势力卡 / 道具卡 / 规则卡",
+      "card_id": "char_001",
+      "passed": true,
+      "source_scene_id": "s002或跨场景",
+      "evidence_quote": "支持这张卡更新的正文证据；若无证据，说明缺失",
+      "problem": "无问题 / 无证据更新 / 遗漏更新 / 全量重写 / 命名冲突",
+      "minimal_fix": "若有问题，给出最小修复动作"
+    }
+  ],
+  "repair_level_recommendation": {
+    "level": "L0",
+    "reasons": [
+      "选择此修复级别的原因1，例如：只有局部描写违规，整体结构完整",
+      "选择此修复级别的原因2，例如：违规内容可以在不改动上下文的情况下直接替换",
+      "选择此修复级别的原因3，例如：核心剧情转折点未受影响"
+    ],
+    "minimal_repair_steps": [
+      "最小修复步骤1（最优先），例如：删除第三段中'突然获得传承'的描写，改为通过努力解锁",
+      "最小修复步骤2，例如：在第五段补充主角受伤后的明显行动限制",
+      "最小修复步骤3，例如：在章末添加两句话触及已逾期债务线索"
+    ],
+    "patch_target_location": "L0修补的目标位置，例如：第三段第二句至第四句",
+    "patch_content_items": [
+      "L0修补内容1，例如：将'传承突然涌现'改为'在极度危机下意外触发了早年师父留下的封印记忆'",
+      "L0修补内容2，例如：在追逐段落添加一句'右臂的旧伤在这一刻刺痛地提醒了他'"
+    ]
+  }
+}
+
+注：当 repair_level_recommendation.level 为 L1 时，额外输出：
+"text_ranges_to_redo": [{"start_anchor": "起始短引文", "end_anchor": "结束短引文", "scene_id": "s002"}],
+"scenes_to_keep": ["可保留场景ID"],
+"bridge_reconnect_method": "重写部分与保留部分之间的衔接方式"
+
+当 repair_level_recommendation.level 为 L2 时，额外输出：
+"must_hold_forbidden": ["重写时绝对不能出现的内容（3条）"],
+"must_complete_receipts": ["重写时必须兑现的叙事收款（3条）"],
+"must_land_cost": "重写时必须落地的代价（1条最关键的）"

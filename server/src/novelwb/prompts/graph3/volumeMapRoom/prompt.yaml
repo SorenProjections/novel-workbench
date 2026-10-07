@@ -1,0 +1,12 @@
+prompt_key: graph3.volumeMapRoom
+version: "1.1"
+description: "本卷地图与场景深化"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.longline_content
+  - input_pack.volume_plan_content
+  - input_pack.volume_story_core
+  - input_pack.carryover_context
+  - input_pack.complexity_profile
+output_format: json

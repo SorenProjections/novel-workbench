@@ -1,0 +1,19 @@
+prompt_key: graph4.blocksWrite
+version: "3.1"
+description: "完整事件连续正文生成"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.bible_content
+  - input_pack.char_content
+  - input_pack.ledger_content
+  - input_pack.volume_content
+  - input_pack.event_plan
+  - input_pack.scene_plan
+  - input_pack.event_route
+  - input_pack.world_pulse
+  - input_pack.event_expansion
+  - input_pack.budget
+  - input_pack.jit_cards
+  - input_pack.retry_feedback
+output_format: json

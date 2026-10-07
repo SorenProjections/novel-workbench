@@ -1,0 +1,29 @@
+step_key: graph5.chapter.fatigue_report
+graph: "5"
+schema_version: v1
+description: "章节化疲劳报告（Intent轮换/钩子重复/Breather/MomentumDebt周期统计）"
+input_schema: CreateRunRequest
+output_schema: FatigueReport
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph5.fatigue
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 1500
+  temperature: 0.3
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

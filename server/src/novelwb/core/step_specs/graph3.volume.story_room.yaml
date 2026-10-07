@@ -1,0 +1,35 @@
+step_key: graph3.volume.story_room
+graph: "3"
+schema_version: v1
+description: "本卷故事深化（成长线/实体议程/关键物品/大场面/临时资产）"
+input_schema: CreateRunRequest
+output_schema: VolumeContract
+commit_type: auth_patch
+is_key_artifact: true
+
+llm:
+  prompt_key: graph3.volumeStoryRoom
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 40000
+  temperature: 0.75
+
+hardlint:
+  profile: key_artifact
+  enabled_rule_groups: [A, B, D, E, F]
+
+regression:
+  required_on_key_artifact: true
+  profiles: [style, mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 12
+  max_new_terms: 8
+  max_explanation_density: 0.2

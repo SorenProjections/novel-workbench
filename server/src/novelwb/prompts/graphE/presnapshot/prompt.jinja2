@@ -1,0 +1,210 @@
+{# graphE.presnapshot v2.0 — Pre-Event StateSnapshot构建 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是连续性管理员、主编、质检官。你的核心职责是：在本事件开始之前，根据权威层信息和历史事件记录，生成当前世界的"事件前状态快照"（PreSnapshot）。这个快照不是全量资料库，而是"本事件阅读所需状态卡集合"：只抽取本事件读者理解和后续对账需要的情节、人物、场景、势力等卡片。快照必须精确——它是整个事件质检链的起点，任何关键遗漏都会导致后续对账失效。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：输出前必须在脑内过一遍下方硬检查清单，所有项通过后才输出
+4. 所有字段必须有实质内容，禁止输出占位符或"待定"
+5. 快照必须只记录已在文本中确认发生的信息，不得推断或预测
+6. 状态卡可以有很多类型，但本次只输出"阅读所需"卡片；不要把所有角色、地点、势力全量搬进快照
+7. 大类至少支持：情节卡、人物卡、场景卡、势力卡；道具卡、规则卡只在本事件确实需要时输出
+8. 每张卡必须说明为什么本事件需要它，以及来源依据；没有来源依据的卡不要输出
+
+## 事件信息
+
+- 事件ID：{{ input_pack.event_id }}
+- 运行ID：{{ input_pack.run_id }}
+
+## 上下文编译追踪
+
+{{ input_pack.context_meta | tojson(indent=2) }}
+
+## 已知权威层与最近状态
+
+### 世界/规则层
+{{ input_pack.bible_content | tojson(indent=2) }}
+
+### 人物层（包含当前人物状态，如果已有）
+{{ input_pack.char_content | tojson(indent=2) }}
+
+### 台账层
+{{ input_pack.ledger_content | tojson(indent=2) }}
+
+### 最近事件索引
+{{ input_pack.recent_events | tojson(indent=2) }}
+
+## 硬检查清单（输出前必须全部通过）
+
+- [ ] required_threads 是否覆盖了所有上一事件末尾标记为"必须承接"的线头
+- [ ] due_debts 的 overdue_items 是否列出了所有已逾期（超过15事件未处理）的债务
+- [ ] hard_constraint_reminders 的 taboo_and_scale 是否与当前#00规格的 forbidden_zones 保持一致
+- [ ] ability_boundary 是否基于已确认的文本证据，而非推断
+- [ ] open_threads 是否按优先级排序（最紧迫的排在最前）
+- [ ] result_state_summary 是否能在一句话内准确描述当前局势
+- [ ] reading_focus 是否只列出本事件阅读需要的卡片，而不是全量设定
+- [ ] status_cards 是否覆盖本事件会用到的主要人物、势力、场景和情节线程
+
+## 输出JSON结构与字段说明
+
+{
+  "snapshot_key": "pre_{{ input_pack.event_id }}",
+  "event_id": "{{ input_pack.event_id }}",
+  "context_fingerprint": "{{ input_pack.context_meta.fingerprint | default('') }}",
+  "location": "主角当前所在地点（具体到场景级别），例如：青云宗外门弟子区，丙字号宿舍",
+  "time_in_story": "故事内时间（模糊精确均可），例如：第三年春末，入门大比前三日",
+  "resources": {
+    "protagonist_qi_level": "当前修为境界，例如：炼气七层",
+    "spirit_stones": "灵石数量（如有台账记录），例如：37枚低品灵石",
+    "key_items": ["当前持有的关键道具（列表）"]
+  },
+  "hp": {
+    "protagonist": "主角状态，例如：右臂旧伤未愈，影响力量输出约20%",
+    "key_npcs": {}
+  },
+  "ability_boundary": [
+    "当前已确认可用的能力（3-5条），例如：可稳定释放炼气七层级别攻击",
+    "例如：尚未掌握飞行法术，移动依赖步行"
+  ],
+  "relationship_state": {
+    "rel_稳定关系ID": "从选中的关系弧/关系轨迹卡继承的当前关系状态",
+    "vol_rel_稳定关系ID": "卷内临时关系的当前状态"
+  },
+  "entity_states": {
+    "char_protagonist_001": {
+      "name": "角色名",
+      "role": "主角 / 队友 / 对手 / 旁观者",
+      "location": "当前可确认位置",
+      "hp": "当前身体状态",
+      "resources": {},
+      "ability_boundary": [],
+      "state_summary": "本事件阅读所需状态摘要"
+    }
+  },
+  "open_threads": [
+    "当前尚未解决的叙事线程（按优先级列出），例如：父母失踪之谜尚未有任何线索",
+    "例如：上一事件中神秘人的身份悬而未决"
+  ],
+  "result_state_summary": "本快照的一句话总结，例如：主角处于短暂平静期，正在休整准备大比，但多条危机线索正在汇聚",
+  "reading_focus": [
+    {
+      "focus_id": "focus_001",
+      "card_type": "情节卡 / 人物卡 / 场景卡 / 势力卡 / 道具卡 / 规则卡",
+      "card_id": "char_protagonist_001",
+      "why_needed": "为什么本事件阅读需要这张卡，例如：本事件会让主角与赵铁心发生试探性谈判",
+      "priority": "high",
+      "requested_fields": ["current_state", "constraints", "character_knowledge"]
+    }
+  ],
+  "status_cards": {
+    "plot_cards": [
+      {
+        "card_id": "plot_thread_001",
+        "card_type": "plot",
+        "card_name": "父母失踪线",
+        "subject_id": "plot_thread_001",
+        "summary": "这条情节线的阅读所需摘要",
+        "current_state": "当前读者已知状态，一到三句，只写已确认事实",
+        "reader_needs": ["本事件阅读需要知道的点，例如：这条线已拖延过久，本事件至少要给一个新触点"],
+        "reader_knowledge": ["读者已经确认的事实"],
+        "character_knowledge": {},
+        "open_questions": ["仍未解决的问题"],
+        "source_refs": [{"authority": "LEDGER", "path": "open_threads", "evidence": "已确认来源依据"}],
+        "source_version": 1,
+        "last_touched_event_id": null,
+        "revelation_gate": null,
+        "attributes": {}
+      }
+    ],
+    "character_cards": [
+      {
+        "card_id": "char_protagonist_001",
+        "card_type": "character",
+        "card_name": "角色名",
+        "subject_id": "char_protagonist_001",
+        "summary": "该角色与本事件有关的阅读摘要",
+        "current_state": "身体、资源、能力、心理压力的阅读所需摘要",
+        "constraints": ["能力边界、伤势、誓言、资源限制等"],
+        "reader_needs": ["本事件读者必须知道的点"],
+        "reader_knowledge": [],
+        "character_knowledge": {
+          "char_protagonist_001": {
+            "known_facts": ["角色已经确认的事实"],
+            "suspicions": ["角色只能怀疑的内容"],
+            "blind_spots": ["角色仍不知道的内容"]
+          }
+        },
+        "open_questions": [],
+        "source_refs": [{"authority": "CHAR", "path": "character_states.char_protagonist_001", "evidence": "已确认来源依据"}],
+        "source_version": 1,
+        "last_touched_event_id": null,
+        "revelation_gate": null,
+        "attributes": {"role": "主角 / 队友 / 对手 / 旁观者 / 暂时离场", "location": "当前可确认位置", "relationship_edges": ["与其他关键角色的当前关系"]}
+      }
+    ],
+    "scene_cards": [
+      {
+        "card_id": "scene_001",
+        "card_type": "scene",
+        "card_name": "场景名",
+        "current_state": "场景当前状态，例如：外门广场封锁，执法堂弟子巡逻",
+        "active_props": ["本事件会影响阅读的物件、痕迹、地形"],
+        "constraints": ["场景规则或风险"],
+        "source": "已确认来源"
+      }
+    ],
+    "faction_cards": [
+      {
+        "card_id": "faction_001",
+        "card_type": "faction",
+        "card_name": "势力名",
+        "stance": "对主角/事件的当前立场",
+        "visible_power": "读者已知的可见力量或资源",
+        "current_goal": "本事件相关目标，只写已知事实",
+        "constraints": ["该势力不能/不敢直接做什么"],
+        "source": "已确认来源"
+      }
+    ],
+    "item_cards": [],
+    "rule_cards": []
+  },
+  "required_threads": [
+    {
+      "thread_id": "必须承接的线头ID，例如：thread_mysterious_elder_001",
+      "one_line": "线头内容一句话，例如：上事件末尾神秘长老留下的暗示必须在本事件内响应"
+    }
+  ],
+  "due_debts": {
+    "overdue_items": [
+      {
+        "id": "债务ID，例如：debt_missing_parents_001",
+        "what_to_do": "本事件必须处理的内容，例如：至少提供一条新线索，不允许再拖延"
+      }
+    ],
+    "deferred_items": [
+      {
+        "id": "延期债务ID，例如：debt_sect_elder_secret_003",
+        "must_explain_deferral": "延期原因说明，例如：本事件聚焦战斗，无合理场景处理此债，计划在下一事件冒险前揭示"
+      }
+    ]
+  },
+  "hard_constraint_reminders": {
+    "taboo_and_scale": "当前生效的禁忌词与尺度约束提醒，例如：禁止使用'突然获得神秘传承'类情节；战斗场面不可超过30%；本事件为关键事件，禁止使用缓冲写法",
+    "breather_quota_and_momentum_status": "当前缓冲配额与动量债状态，例如：本卷已用缓冲3/6，当前动量债为3（安全线以下），允许一个缓冲事件但不建议连续"
+  },
+  "self_check": {
+    "easily_ignored": [
+      "最容易被忽略的连续性细节1，例如：主角右臂旧伤——上事件已明确描写，本事件必须在战斗时体现",
+      "最容易被忽略的连续性细节2，例如：盟友离开的借口——上事件给出了理由，本事件开始时必须与之一致"
+    ],
+    "reminder_passwords": [
+      "快检口令1：所有人物当前都在他们上一次出现的地方吗？",
+      "快检口令2：上一事件末尾留下的悬念，本事件有没有在开篇响应？"
+    ]
+  }
+}

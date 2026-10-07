@@ -1,0 +1,30 @@
+step_key: graph5.chapterize.cut
+graph: "5"
+schema_version: v1
+description: "完整事件正文自然切章（锚点连续覆盖，不改写因果）"
+input_schema: EventDraft
+output_schema: ChapterSpec
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph5.chapterizeCut
+  best_of_n: 2
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 3000
+  temperature: 0.5
+
+hardlint:
+  profile: chapterize
+  enabled_rule_groups: [A, F]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [chapterize]
+
+rag:
+  enabled: false

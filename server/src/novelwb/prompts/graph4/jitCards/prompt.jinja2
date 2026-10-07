@@ -1,0 +1,69 @@
+{# graph4.jitCards v2.0 — JIT素材卡实例化（Just-In-Time写作前准备） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是一位精通细节落地的场景顾问。在正式写作前，为本事件生成Just-In-Time素材卡——这些是写作时需要的即时参考信息，包括：场景环境细节、人物当前状态、新技法的具体描述、关键道具的外观和功能。素材卡必须具体、可直接在正文中使用。
+
+JIT 卡不是全量设定库。只生成当前 event_slot 和 block_plan 真正需要读取的卡片，优先覆盖：情节推进卡、人物状态卡、场景卡、势力态势卡、道具卡、规则边界卡。每张卡都要说明 applies_to_blocks，避免把无关设定带入正文。
+
+JIT 卡必须提供“可展开材料”，而不只是摘要：
+- 场景卡：可互动的物件、空间限制、感官变化、进入和离开条件。
+- 人物卡：本场目标、隐藏顾虑、可见习惯动作、对主角行动的两种可能反应。
+- 势力卡：本场能调用的人手/资源/制度压力，以及不能越过的边界。
+- 情节卡：本场必须推进的因果节点、不能提前兑现的部分、可留下的余波。
+- 道具或规则卡：本场可见用法、代价和失败表现。
+
+每张卡给出2-5条可直接转化为动作、对白、环境变化或后果的 details。不要生成纯背景百科。
+
+输入已由 ContextCompiler 筛选。不得从常识补写 context_meta 未列出的项目内设定，也不得绕过人物知识边界或揭秘前置条件。
+
+## 上下文编译追踪
+
+{{ input_pack.context_meta | tojson(indent=2) }}
+
+## 事件槽位
+
+{{ input_pack.event_slot | tojson(indent=2) }}
+
+## 块级大纲
+
+{{ input_pack.block_plan | tojson(indent=2) }}
+
+## BIBLE参考
+
+{{ input_pack.bible_content | tojson(indent=2) }}
+
+## REG参考
+
+{{ input_pack.reg_content | tojson(indent=2) }}
+
+## 角色设定参考
+
+{{ input_pack.char_content | tojson(indent=2) }}
+
+## 输出JSON结构与字段说明
+
+{
+  "cards": [
+    {
+      "card_type": "PLOT / CHARACTER_STATE / SCENE / FACTION / ITEM / RULE / TECHNIQUE / FACT",
+      "card_id": "card_001",
+      "title": "素材卡标题，例如：战斗场景环境描述",
+      "content": "具体内容（可直接用于写作的细节），例如：废墟广场，中央有一口干涸的石井，四角矗立着残破的石柱，地面布满裂纹，空气中弥漫着旧日辉煌的气息。黄昏时分，落日将所有东西染成血红色。",
+      "why_needed": "为什么当前事件必须读取这张卡，例如：b001-b002 都发生在该场景，环境会影响战斗调度",
+      "source_basis": ["来自 event_slot.result_target", "来自 BIBLE.world_b"],
+      "applies_to_blocks": ["b001", "b002"]
+    },
+    {
+      "card_type": "CHARACTER_STATE",
+      "card_id": "card_002",
+      "title": "主角当前状态",
+      "content": "精气神状态：刚经历了三天连续修炼，精神稍显疲惫但斗志昂扬。身体状态：右臂有轻微旧伤，剧烈运动会加重。心理状态：对即将到来的对抗既期待又有些不安。",
+      "why_needed": "b001 的行动选择受伤势和心理预期影响",
+      "source_basis": ["来自 CHAR.current_state", "来自 recent status card"],
+      "applies_to_blocks": ["b001"]
+    }
+  ],
+  "omitted_scope": [
+    "明确说明未读取的全量设定范围，例如：未读取其他卷势力年表，因为本事件不涉及"
+  ]
+}

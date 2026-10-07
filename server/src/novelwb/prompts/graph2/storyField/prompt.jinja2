@@ -1,0 +1,345 @@
+{# graph2.storyField v1.0 — 每次只生成一个全书StoryRoom逻辑文件 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是长篇小说总编剧。当前任务只生成一个可独立审核的逻辑文件：
+**{{ input_pack.target_label }}（{{ input_pack.target_key }}）**。
+
+## 严格边界
+1. 只输出下方指定的一个根字段，禁止顺手生成、重写或补充其他StoryRoom字段。
+2. 已批准文件是权威前序，只能继承和引用，不能静默改写其中的核心因果、ID和时序。
+3. 所有稳定ID必须可供后续卷纲精确引用；不得用名称代替ID。
+4. 丰富度来自因果、反应、关系、场景与表现层次，不得靠无关角色、套娃秘密或术语膨胀。
+5. low复杂度保持直接因果，但仍要把人物选择、代价和关系变化写具体。
+6. 输出合法JSON，不含注释、代码围栏、解释文字或“待定”占位。
+
+## 权威输入
+规格：{{ input_pack.spec00_content | tojson(indent=2) }}
+
+世界硬锚：{{ input_pack.world_a_content | tojson(indent=2) }}
+
+核心角色：{{ input_pack.cast_content | tojson(indent=2) }}
+
+已批准长线骨架：{{ input_pack.longline_core | tojson(indent=2) }}
+
+已批准StoryRoom前序：{{ input_pack.approved_story_room | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | tojson(indent=2) }}
+
+{% if input_pack.target_key == 'character_growth_arc' %}
+本次唯一聚焦角色：{{ input_pack.target_character | tojson(indent=2) }}
+
+只输出：
+{
+  "character_growth_arc": {
+    "character_id": "必须与聚焦角色id完全一致",
+    "name": "角色名",
+    "story_role": "全书叙事职能",
+    "background_pressure": "旧经历持续施加的压力",
+    "external_goal": "角色主动追求",
+    "inner_need": "真正需要改变之处",
+    "desire": "欲望",
+    "fear": "恐惧",
+    "false_belief": "会制造具体后果的错误信念",
+    "strengths": ["优势及适用边界"],
+    "flaws": ["缺点及造成的后果"],
+    "ability_start": "初始能力边界与代价",
+    "relationship_anchors": [
+      {"other_character_id": "核心角色ID", "start_dynamic": "初始关系", "end_dynamic": "终局关系"}
+    ],
+    "growth_stages": [
+      {"stage_id": "长线阶段ID或阶段序号", "pressure": "压力", "choice": "主动选择", "cost": "代价", "behavioral_change": "可见行为变化", "ability_change": "能力变化", "relationship_change": "关系变化"}
+    ],
+    "climax_choice": "终局主动选择",
+    "end_state": "终局能力、资源、关系、身份与认知状态",
+    "voice_markers": ["稳定的语言或行为辨识点"]
+  }
+}
+{% elif input_pack.target_key == 'master_story_design' %}
+只输出：
+{
+  "master_story_design": {
+    "central_dramatic_question": "全书核心问题",
+    "story_engine": "持续制造目标、阻力、选择、代价与新局面的机制",
+    "opening_state": "开篇能力、资源、关系、处境和认知",
+    "inciting_change": "迫使主角行动的具体变化",
+    "active_goal_chain": [
+      {"stage_id": "长线阶段ID或序号", "goal": "主动目标", "pressure": "主要阻力", "choice": "关键选择", "cost": "代价", "irreversible_change": "不可逆变化", "payoff": "阶段满足"}
+    ],
+    "main_conflict_escalation": ["冲突如何逐级扩大并保持直接因果"],
+    "emotional_progression": ["核心关系分阶段情绪变化"],
+    "climax_design": {"location_requirement": "空间要求", "choice": "终局选择", "cost": "终局代价", "promise_payoff": "类型承诺兑现"},
+    "ending_state": "结局能力、资源、关系、身份、认知与世界局面"
+  }
+}
+{% elif input_pack.target_key == 'major_foreshadowing' %}
+只输出：
+{
+  "major_foreshadowing": [
+    {
+      "hook_id": "hook_稳定ID", "name": "伏笔名", "story_question": "制造的问题",
+      "truth": "作者层真相", "visible_carriers": ["动作/物件/规则异常/对话缺口/场景痕迹"],
+      "plant_stage_id": "首次埋设阶段", "reinforcement_plan": [
+        {"stage_id": "阶段ID或序号", "new_information": "新增信息", "surface_interpretation": "读者当时解释"}
+      ],
+      "payoff_window": "回收窗口", "payoff_action": "通过行动或后果回收",
+      "involved_character_ids": ["核心角色ID"], "early_reveal_guard": "禁止提前说破的内容"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'ensemble_relationship_index' %}
+本步只选择值得长期追踪的核心关系对，不写完整关系弧。
+
+选择规则：
+1. 同一无向角色对只能出现一次，character_ids固定为两个不同的核心角色ID。
+2. medium复杂度选择8-12组真正会改变选择、代价或结局的关系；不要生成全部两两组合。
+3. 每名核心角色至少进入一组关系；主角之外至少保留3组非主角关系。
+4. 优先继承已批准成长弧中的relationship_anchors，消除重复和单向矛盾。
+5. relationship_id必须稳定、简短、可读，后续每组关系弧会按这个ID单独生成。
+
+只输出紧凑索引：
+{
+  "ensemble_relationship_index": [
+    {
+      "relationship_id": "rel_稳定ID",
+      "name": "角色A与角色B的关系名",
+      "character_ids": ["角色A ID", "角色B ID"],
+      "story_function": "这组关系对全书因果、成长或情绪的独特作用",
+      "core_friction": "不可由另一组关系替代的持续摩擦",
+      "stage_focus": ["最需要发生转折的阶段ID或序号"],
+      "priority": "core/major/supporting"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'ensemble_relationship_arc' %}
+本次关系索引条目：{{ input_pack.target_relation | tojson(indent=2) }}
+
+只深化这一组关系。不得生成其他角色对，不得改写relationship_id或character_ids。
+转折必须同时兼容双方已经批准的成长弧，并通过事件和行为变化可见；禁止只写心理总结。
+
+只输出：
+{
+  "ensemble_relationship_arc": {
+    "relationship_id": "必须与本次关系索引完全一致",
+    "name": "关系名",
+    "character_ids": ["必须是索引指定的两个角色ID"],
+    "start_dynamic": "开篇时双方的利益、认知、权力和情绪位置",
+    "shared_interest": "能够合作的具体基础",
+    "core_friction": "会持续制造选择和代价的摩擦",
+    "mutual_misreading": "双方如何误读对方及其可见表现",
+    "turning_stages": [
+      {
+        "stage_id": "阶段ID或序号",
+        "event": "改变关系的具体事件",
+        "choice_a": "角色A的主动选择",
+        "choice_b": "角色B的主动选择",
+        "cost": "这次变化付出的代价",
+        "visible_change": "后续行动、称呼、距离、资源或风险承担的可见变化"
+      }
+    ],
+    "climax_test": "终局前对这组关系的最终考验",
+    "end_dynamic": "结局时双方多维关系状态",
+    "forbidden_jump": "没有哪些铺垫时不得发生哪种跨越"
+  }
+}
+{% elif input_pack.target_key == 'ensemble_relationship_arcs' %}
+只输出：
+{
+  "ensemble_relationship_arcs": [
+    {
+      "relationship_id": "rel_稳定ID", "character_ids": ["角色A ID", "角色B ID"],
+      "start_dynamic": "初始关系", "shared_interest": "合作基础", "core_friction": "持续摩擦",
+      "turning_stages": [{"stage_id": "阶段ID或序号", "event": "关系事件", "visible_change": "行为变化"}],
+      "end_dynamic": "终局关系", "forbidden_jump": "不得无铺垫跨越的变化"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'narrative_line_index' %}
+本步只确定值得长期追踪的故事线目录，不展开每条线的五阶段明细。
+
+规则：
+1. medium复杂度通常选择7-12条高价值故事线，必须包含主线，但不得为了凑数复制人物成长弧或关系弧。
+2. line_id稳定唯一；owner_ids只能使用已批准角色ID，无明确人物所有者的势力/生态线可以为空数组。
+3. 每条线必须拥有独立目标、可见载体和独特叙事职能；仅换名字但推进内容相同的线应合并。
+4. collision_hints只列可能碰撞的line_id，完整碰撞和阶段推进留给逐线步骤。
+
+只输出紧凑索引：
+{
+  "narrative_line_index": [
+    {
+      "line_id": "line_稳定ID",
+      "line_type": "main/subplot/hidden/relationship/faction/item/ecology",
+      "name": "故事线名",
+      "owner_ids": ["主动推动者ID"],
+      "story_function": "对全书因果、成长、关系或世界变化的不可替代作用",
+      "independent_goal": "主角不介入时仍会推进的目标",
+      "stage_span": ["涉及的阶段ID"],
+      "relationship_ids": ["直接承载的关系弧ID"],
+      "collision_hints": ["可能碰撞的line_id"],
+      "priority": "core/major/supporting"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'narrative_line' %}
+本次故事线索引条目：{{ input_pack.target_entry | tojson(indent=2) }}
+
+只深化这一条故事线，不得生成其他故事线，不得修改line_id。每个阶段必须形成“压力—主动移动—正文可见痕迹”，避免把人物成长弧原样抄成故事线。
+
+只输出：
+{
+  "narrative_line": {
+    "line_id": "必须与索引完全一致",
+    "line_type": "main/subplot/hidden/relationship/faction/item/ecology",
+    "name": "故事线名",
+    "owner_ids": ["主动推动者ID"],
+    "independent_goal": "主角不介入时仍会追求的目标",
+    "visibility": "明线/暗线/作者层",
+    "lifecycle": "seed/active/converging/paid_off/dormant/retired",
+    "start_state": "开篇状态",
+    "progression_stages": [
+      {"stage_id": "阶段ID", "pressure": "自然压力", "movement": "推进/碰撞/误导/暂压/回收", "visible_trace": "动作、场景、物件、制度结果或对话缺口"}
+    ],
+    "collision_line_ids": ["其他故事线ID"],
+    "convergence_or_payoff": "汇流或回收方式",
+    "retirement_condition": "结束或转背景的条件"
+  }
+}
+{% elif input_pack.target_key == 'narrative_line_registry' %}
+只输出：
+{
+  "narrative_line_registry": [
+    {
+      "line_id": "line_稳定ID", "line_type": "main/subplot/hidden/relationship/faction/item/ecology",
+      "name": "故事线名", "owner_ids": ["主动推动者ID"], "independent_goal": "主角不介入时仍会追求的目标",
+      "visibility": "明线/暗线/作者层", "lifecycle": "seed/active/converging/paid_off/dormant/retired",
+      "start_state": "开篇状态", "progression_stages": [
+        {"stage_id": "阶段ID或序号", "pressure": "自然压力", "movement": "推进或碰撞", "visible_trace": "读者可见载体"}
+      ],
+      "collision_line_ids": ["其他故事线ID"], "convergence_or_payoff": "汇流或回收方式",
+      "retirement_condition": "结束或转背景的条件"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'key_item_index' %}
+本步只选择真正会改变因果、权力、关系或规则理解的关键物品，不写完整持有链。
+
+只输出：
+{
+  "key_item_index": [
+    {
+      "item_id": "item_稳定ID",
+      "name": "物品名",
+      "story_function": "线索/权力/关系/规则载体",
+      "related_line_ids": ["故事线ID"],
+      "related_character_ids": ["角色ID"],
+      "stage_span": ["涉及阶段ID"],
+      "selection_reason": "为何值得跨阶段追踪"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'key_item_arc' %}
+本次关键物品索引条目：{{ input_pack.target_entry | tojson(indent=2) }}
+
+只深化这一件物品，不得生成其他物品，不得修改item_id。持有、损坏、误读、激活和转移必须有因果与可见载体。
+
+只输出：
+{
+  "key_item_arc": {
+    "item_id": "必须与索引完全一致",
+    "name": "关键物品",
+    "story_function": "线索/权力/关系/规则载体",
+    "custody_chain": [
+      {"stage_id": "阶段ID", "holder_id": "持有者或势力ID", "goal": "使用或隐藏目的", "state_change": "持有/损坏/激活/误读/隐藏变化", "evidence_carrier": "正文可见载体"}
+    ],
+    "reveals": ["分层揭示"],
+    "cost_or_limit": "使用代价",
+    "payoff": "最终作用"
+  }
+}
+{% elif input_pack.target_key == 'key_item_arcs' %}
+只输出：
+{
+  "key_item_arcs": [
+    {
+      "item_id": "item_稳定ID", "name": "关键物品", "story_function": "线索/权力/关系/规则载体",
+      "custody_chain": [{"stage_id": "阶段ID或序号", "holder_id": "持有者ID", "goal": "使用或隐藏目的", "state_change": "状态变化"}],
+      "reveals": ["分层揭示"], "cost_or_limit": "使用代价", "payoff": "最终作用"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'major_set_piece_index' %}
+本步只确定需要跨事件铺垫的大场面目录，不展开完整并行战线。
+
+只输出：
+{
+  "major_set_piece_index": [
+    {
+      "set_piece_id": "set_稳定ID",
+      "name": "大场面名",
+      "stage_window": "阶段窗口",
+      "story_function": "它兑现哪些承诺并制造何种不可逆后果",
+      "participating_line_ids": ["已批准故事线ID"],
+      "relationship_ids": ["实际受考验的关系弧ID"],
+      "item_ids": ["实际发挥作用的关键物品ID"],
+      "spatial_requirement": "地图必须提供的空间条件"
+    }
+  ]
+}
+{% elif input_pack.target_key == 'major_set_piece_seed' %}
+本次大场面索引条目：{{ input_pack.target_entry | tojson(indent=2) }}
+
+只深化这一场大场面，不得生成其他大场面，不得修改set_piece_id。主角之外的参与者、空间变化和事后余波必须独立成立。
+
+只输出：
+{
+  "major_set_piece_seed": {
+    "set_piece_id": "必须与索引完全一致",
+    "name": "大场面",
+    "stage_window": "阶段窗口",
+    "participating_line_ids": ["已批准故事线ID"],
+    "relationship_ids": ["受考验的关系弧ID"],
+    "item_ids": ["参与的关键物品ID"],
+    "build_up_requirements": ["跨事件铺垫及其可见载体"],
+    "non_protagonist_arcs": ["其他人物与势力的行动弧"],
+    "spatial_requirement": "地图落实要求",
+    "escalation_ladder": ["逐级升级"],
+    "aftermath_scope": ["人物、势力、地点、物件、舆论后果"]
+  }
+}
+{% elif input_pack.target_key == 'major_set_piece_seeds' %}
+只输出：
+{
+  "major_set_piece_seeds": [
+    {
+      "set_piece_id": "set_稳定ID", "name": "大场面", "stage_window": "阶段窗口",
+      "participating_line_ids": ["已批准故事线ID"], "build_up_requirements": ["跨事件铺垫"],
+      "non_protagonist_arcs": ["其他人物与势力的行动弧"], "spatial_requirement": "地图落实要求",
+      "aftermath_scope": ["人物、势力、地点、物件、舆论后果"]
+    }
+  ]
+}
+{% elif input_pack.target_key == 'asset_lifecycle_policy' %}
+只输出：
+{
+  "asset_lifecycle_policy": {
+    "persistent": "贯穿全书资产何时必须保留", "volume": "卷级资产如何继承或结算",
+    "transient": "过渡资产何时创建与退休", "promotion": "临时资产升级条件",
+    "retirement": "退场时必须留下的状态与影响"
+  }
+}
+{% elif input_pack.target_key == 'entity_autonomy_rules' %}
+只输出：
+{
+  "entity_autonomy_rules": [
+    "人物、势力、生物、物件或环境脱离主角后仍按目标、资源、信息和时间行动的可执行规则"
+  ]
+}
+{% elif input_pack.target_key == 'story_room_rules' %}
+只输出：
+{
+  "story_room_rules": {
+    "must_preserve": ["后续卷纲不得破坏的核心因果、成长边界和伏笔时序"],
+    "flexible_zones": ["允许卷级调整的内容"],
+    "anti_bloat_rules": ["限制无效角色、设定、支线和秘密的规则"]
+  }
+}
+{% endif %}

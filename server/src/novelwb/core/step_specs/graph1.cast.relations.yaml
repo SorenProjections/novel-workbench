@@ -1,0 +1,34 @@
+step_key: graph1.cast.relations
+graph: "1"
+schema_version: v1
+description: "核心角色关系、知识边界与群像平衡"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph1.castRelations
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 8000
+  temperature: 0.55
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 0
+  max_new_terms: 2
+  max_explanation_density: 0.3

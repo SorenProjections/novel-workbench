@@ -1,0 +1,72 @@
+{# graph5.chapterizeReview v2.0 — 章节化方案评审（Rubric双检查） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是审稿编辑、质检官、修复策略制定者。你的核心职责是：对章节化方案进行双Rubric检查——阅读质感维度和机制合规维度。你的评审必须具体，每条违规都要指明具体章节ID和具体问题，不允许模糊的笼统描述。评审结果将决定章节化方案是否可以进入正式切章阶段。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：每个Rubric项目独立判断，不允许用一个优点抵消另一个缺陷
+4. 所有字段必须有实质内容，无问题时填写"通过，无问题"
+5. fix_plan 必须具体到可执行的操作步骤
+6. 输出必须只包含 VerifyResult 允许字段：staging_id、passed、violations、missing、drift、fix_plan。不要输出 reading_rubric、mechanism_rubric 等额外字段；Rubric 证据压入 violations/missing/drift 的字符串中。
+
+## 待评审的章节化方案
+
+{{ input_pack.chapter_specs | tojson(indent=2) }}
+
+## 按锚点实际切出的章节正文
+
+{{ input_pack.chapter_texts | default({}) | tojson(indent=2) }}
+
+## 事件ID（用于生成staging_id）
+
+{{ input_pack.event_id }}
+
+## 双Rubric检查标准
+
+**Rubric A — 阅读质感维度**：
+- 镜头气候一致性：各章节的叙事腔调是否与 spec00 的 lens_climate 保持一致
+- 手册密度：新术语/新实体的引入密度是否在每章2个以内
+- 节奏不断裂：相邻章节之间的情绪/节奏转变是否有过渡，不允许突兀断层
+- 气候不漂移：Breather章之后是否有足够的张力恢复，不允许气候永久降温
+- 标题匹配内容：标题是否准确反映本章最重要的内容
+
+**Rubric B — 机制合规维度**：
+- 意图完成度：章节意图是否在 deliverables 中得到具体体现
+- 边界自然：切点是否位于动作、对话、情绪与信息意义完整落地之后，不能切断句子或反应链
+- 锚点有效：start_anchor/end_anchor 是否逐字存在于实际正文，切出的章节是否连续覆盖全文
+- 停顿价值：章末是否形成悬念、信息差、关系余震、后果、新目标或情绪落点之一，不强制轮换悬崖钩
+- 缓冲配额：Breather章比例是否符合不超过20%的要求
+- 动量趋势：momentum_debt_delta 的累积是否处于合理范围
+- 状态卡焦点：ledger_patch.card_focus 是否只抽取本章阅读所需的情节、人物、场景、势力和物品，不得全量搬运
+
+## 输出JSON结构
+
+{
+  "staging_id": "review_{{ input_pack.event_id }}",
+  "passed": true,
+  "violations": [
+    "硬违规。格式：ch_001 / Rubric A-节奏不断裂：具体问题与证据"
+  ],
+  "missing": [
+    "缺失项。格式：ch_002 缺少 hook_type，无法判断章末资产"
+  ],
+  "drift": [
+    "软风险。格式：前三章均为 Advance，建议下一章切 Settle 或 Foreshadow"
+  ],
+  "fix_plan": null
+}
+
+如果 passed=false，fix_plan 必须为：
+
+{
+  "fix_level": "L0",
+  "patch_instructions": ["逐条说明如何修改章节规格"],
+  "target_block_ids": [],
+  "rewrite_chars_hint": null,
+  "reason": "失败原因摘要"
+}

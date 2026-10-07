@@ -1,0 +1,30 @@
+step_key: graphR.workflow.audit
+graph: "R"
+schema_version: v1
+description: "独立审核当前暂存稿并生成可执行修改意见"
+input_schema: ReviewRevisionRequest
+output_schema: ReviewAuditResult
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphR.workflow.audit
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 16000
+  temperature: 0.2
+
+hardlint:
+  profile: default
+  enabled_rule_groups: []
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

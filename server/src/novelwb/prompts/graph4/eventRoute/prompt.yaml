@@ -1,0 +1,6 @@
+prompt_key: graph4.eventRoute
+version: "1.0"
+description: "事件动态阅读与展开路由"
+shared_fragments: [json_output_contract]
+variables: [input_pack.event_slot, input_pack.budget, input_pack.latest_snapshot, input_pack.volume_content, input_pack.context_meta]
+output_format: json

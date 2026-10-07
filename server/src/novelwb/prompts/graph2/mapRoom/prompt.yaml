@@ -1,0 +1,13 @@
+prompt_key: graph2.mapRoom
+version: "1.0"
+description: "全书主要地图深化"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+  - input_pack.cast_content
+  - input_pack.longline_core
+  - input_pack.story_room_core
+  - input_pack.complexity_profile
+output_format: json

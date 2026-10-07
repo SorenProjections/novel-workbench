@@ -1,0 +1,12 @@
+prompt_key: graph3.volumeMapSchedule
+version: "1.0"
+description: "本卷地图逐事件排期"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.volume_id
+  - input_pack.event_slots
+  - input_pack.volume_story_core
+  - input_pack.volume_map_room
+  - input_pack.complexity_profile
+output_format: json

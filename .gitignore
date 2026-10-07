@@ -1,0 +1,55 @@
+# 工作区数据（不进git）
+workspace/
+cache/
+.runtime/
+*.log
+*.pid
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+node_modules/
+*.tsbuildinfo
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+*.db-*
+*.sqlite-*
+*.sqlite3-*
+
+# 环境变量
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# 生成文件
+server/src/novelwb/core/step_specs/generated/
+server/src/novelwb/core/schemas/generated/
+server/src/novelwb/web/
+
+# 编辑器
+.vscode/
+.idea/
+.vs/
+*.swp
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# Isolated verification reports
+.checks/

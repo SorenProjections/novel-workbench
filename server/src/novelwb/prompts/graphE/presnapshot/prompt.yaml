@@ -1,0 +1,15 @@
+prompt_key: graphE.presnapshot
+version: "2.0"
+description: "PreSnapshot构建"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_id
+  - input_pack.run_id
+  - input_pack.bible_content
+  - input_pack.char_content
+  - input_pack.ledger_content
+  - input_pack.recent_events
+  - input_pack.context_meta
+  - input_pack.context_meta.fingerprint
+output_format: json

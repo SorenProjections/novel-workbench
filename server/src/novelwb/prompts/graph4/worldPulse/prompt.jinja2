@@ -1,0 +1,21 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是叙事世界模拟编辑。先暂时把主角移出画面，推演本事件时间窗内其他人物、势力、生物群落、关键物品持有者和场景系统会自主做什么；再指出这些行动会怎样与事件目标碰撞。只推演路由选中的资产，不新增无关支线。
+
+事件槽：{{ input_pack.event_slot | tojson(indent=2) }}
+动态路由：{{ input_pack.event_route | tojson(indent=2) }}
+最新状态：{{ input_pack.latest_snapshot | tojson(indent=2) }}
+人物状态：{{ input_pack.char_content | tojson(indent=2) }}
+台账：{{ input_pack.ledger_content | tojson(indent=2) }}
+本卷资产：{{ input_pack.volume_content | tojson(indent=2) }}
+
+输出：
+{
+  "story_time_window": "本事件覆盖的故事内时间",
+  "entity_actions": [{"agenda_id": "议程ID", "subject_id": "实体ID", "goal": "自己的目标", "action": "即使主角不出现也会采取的行动", "resource_or_cost": "调用资源或代价", "visible_trace": "正文可见痕迹"}],
+  "faction_movements": [{"faction_id": "势力ID", "order_or_policy": "命令/资源/制度变化", "executor": "执行者", "affected_ids": ["对象ID"]}],
+  "line_movements": [{"line_id": "故事线ID", "from_state": "当前态", "pressure": "自然压力", "possible_next_state": "若无人阻止将到达的状态"}],
+  "item_and_ecology_movements": [{"asset_id": "物品或生态ID", "change": "自主变化", "cause": "原因", "trace": "可被感知的痕迹"}],
+  "offscreen_actions": [{"subject_id": "实体ID", "action": "场外动作", "later_evidence": "本事件中如何以消息、结果或痕迹显现"}],
+  "collision_candidates": [{"participants": ["实体/故事线/资产ID"], "collision": "目标如何冲突", "narrative_value": "为什么值得写", "must_not_resolve": "本次不能一次解决什么"}]
+}

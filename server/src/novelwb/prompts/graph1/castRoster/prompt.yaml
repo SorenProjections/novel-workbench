@@ -1,0 +1,12 @@
+prompt_key: graph1.castRoster
+version: "1.0"
+description: "核心角色阵容索引"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.user_brief
+  - input_pack.spec00_content
+  - input_pack.world_b_content
+  - input_pack.opp_eco_content
+  - input_pack.complexity_profile
+output_format: json

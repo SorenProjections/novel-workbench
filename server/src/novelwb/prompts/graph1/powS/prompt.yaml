@@ -1,0 +1,10 @@
+prompt_key: graph1.powS
+version: "2.0"
+description: "力量结构层POW_S"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+  - input_pack.pow_l_content
+output_format: json

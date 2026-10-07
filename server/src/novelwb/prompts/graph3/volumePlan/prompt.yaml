@@ -1,0 +1,13 @@
+prompt_key: graph3.volumePlan
+version: "2.2"
+description: "分卷规划"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.longline_content
+  - input_pack.carryover_context
+  - input_pack.volume_index
+  - input_pack.volume_id
+  - input_pack.target_event_count
+  - input_pack.complexity_profile
+output_format: json

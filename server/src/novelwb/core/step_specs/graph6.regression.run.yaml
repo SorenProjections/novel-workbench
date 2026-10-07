@@ -1,0 +1,30 @@
+step_key: graph6.regression.run
+graph: "6"
+schema_version: v1
+description: "回归测试执行（语感/机制/事件边界/章节化四类+触发策略）"
+input_schema: CreateRunRequest
+output_schema: RunManifest
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph6.regressionRun
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: max
+  response_format: json_object
+  max_tokens: 3000
+  temperature: 0.3
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, mechanism, event_boundary, chapterize]
+
+rag:
+  enabled: false

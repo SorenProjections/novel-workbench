@@ -1,0 +1,30 @@
+step_key: graphP.chapter.license
+graph: "P"
+schema_version: v1
+description: "CHAPTER_LICENSE（Intent→deliverables→配额约束→台账补丁）"
+input_schema: CreateRunRequest
+output_schema: ChapterSpec
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphP.chapterLicense
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 2500
+  temperature: 0.4
+
+hardlint:
+  profile: chapterize
+  enabled_rule_groups: [A, F]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [chapterize]
+
+rag:
+  enabled: false

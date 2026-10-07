@@ -1,0 +1,33 @@
+step_key: graph4.event.budget
+graph: "4"
+schema_version: v1
+description: "事件预算（常规/关键分流：实体上限/解释密度/伦理代价标记）"
+input_schema: CreateRunRequest
+output_schema: RunManifest
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph4.eventBudget
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 1000
+  temperature: 0.3
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 5
+  max_new_terms: 5

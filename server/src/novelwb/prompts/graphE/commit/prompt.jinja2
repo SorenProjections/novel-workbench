@@ -1,0 +1,31 @@
+{# graphE.commit v2.0 — 事件原子提交确认 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+事件已通过所有检查，现在生成提交回执。你只记录本次提交的关键元数据，不修改正文、状态快照、ObservedDelta 或 DiffReport。
+
+## 事件ID
+
+{{ input_pack.event_id }}
+
+## 运行ID
+
+{{ input_pack.run_id }}
+
+## 对账报告摘要
+
+{{ input_pack.diff_report | tojson(indent=2) }}
+
+## 输出JSON结构
+
+{
+  "receipt_id": "rcpt_{{ input_pack.event_id }}",
+  "run_id": "{{ input_pack.run_id }}",
+  "staging_id": "stg_{{ input_pack.event_id }}",
+  "commit_type": "event",
+  "committed_objects": ["event:{{ input_pack.event_id }}", "snapshot:pre_{{ input_pack.event_id }}", "snapshot:post_{{ input_pack.event_id }}"],
+  "new_versions": {},
+  "committed_at": "{{ input_pack.committed_at | default('') }}",
+  "committed_event_id": "{{ input_pack.event_id }}",
+  "committed_state_after_key": "post_{{ input_pack.event_id }}",
+  "committed_ledger_version": null
+}

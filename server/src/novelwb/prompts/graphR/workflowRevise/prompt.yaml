@@ -1,0 +1,13 @@
+prompt_key: graphR.workflow.revise
+version: "1.0"
+description: "依据人工审核意见在当前暂存稿基础上定向修订"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.review_kind
+  - input_pack.file_label
+  - input_pack.review_feedback
+  - input_pack.original_content
+  - input_pack.required_constraints
+  - input_pack.full_context
+output_format: json

@@ -1,0 +1,13 @@
+step_key: graph4.event.expand
+graph: "4"
+schema_version: v1
+description: "按路由对因果、人物、多线与场面做多轮展开"
+input_schema: CreateRunRequest
+output_schema: EventSlot
+commit_type: none
+is_key_artifact: false
+llm: {prompt_key: graph4.eventExpand, best_of_n: 2, offline: true, model: deepseek-v4-pro, thinking: enabled, reasoning_effort: high, response_format: json_object, max_tokens: 7000, temperature: 0.68}
+hardlint: {profile: event_commit, enabled_rule_groups: [A, B, D, G]}
+regression: {required_on_key_artifact: false, profiles: [mechanism, event_boundary]}
+rag: {enabled: false}
+budget: {max_new_entities: 3, max_new_terms: 4, max_explanation_density: 0.12}

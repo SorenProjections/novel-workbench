@@ -1,0 +1,30 @@
+step_key: graph5.chapterize.review
+graph: "5"
+schema_version: v1
+description: "章级评审（双Rubric：读感语感+机制交付，按Intent检查最小交付）"
+input_schema: ChapterSpec
+output_schema: VerifyResult
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph5.chapterizeReview
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 3000
+  temperature: 0.3
+
+hardlint:
+  profile: chapterize
+  enabled_rule_groups: [A, E, F]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, chapterize]
+
+rag:
+  enabled: false

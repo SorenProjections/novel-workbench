@@ -1,0 +1,33 @@
+step_key: graph4.event.blocks.write
+graph: "4"
+schema_version: v1
+description: "一次生成完整事件连续正文，场景ID仅用于证据回指"
+input_schema: CreateRunRequest
+output_schema: EventDraft
+commit_type: event
+is_key_artifact: false
+
+llm:
+  prompt_key: graph4.blocksWrite
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 20000
+  temperature: 0.8
+
+hardlint:
+  profile: event_commit
+  enabled_rule_groups: [A, B, E, G]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, event_boundary]
+
+rag:
+  enabled: false
+
+budget:
+  max_chars: 24000
+  max_explanation_density: 0.15

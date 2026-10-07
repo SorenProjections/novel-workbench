@@ -1,0 +1,30 @@
+step_key: graph1.bible.lint
+graph: "1"
+schema_version: v1
+description: "BIBLE全量Lint集中检查（主承诺/Lens/术语/训练基线/对手生态）"
+input_schema: CreateRunRequest
+output_schema: RunManifest
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph1.bibleLint
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: max
+  response_format: json_object
+  max_tokens: 3000
+  temperature: 0.3
+
+hardlint:
+  profile: key_artifact
+  enabled_rule_groups: [A, B, D, E, F]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, mechanism]
+
+rag:
+  enabled: false

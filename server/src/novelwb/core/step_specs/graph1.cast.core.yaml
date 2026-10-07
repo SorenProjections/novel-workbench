@@ -1,0 +1,35 @@
+step_key: graph1.cast.core
+graph: "1"
+schema_version: v1
+description: "核心角色阵容、关系与知识边界"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: auth_patch
+is_key_artifact: true
+
+llm:
+  prompt_key: graph1.castCore
+  best_of_n: 2
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: high
+  response_format: json_object
+  max_tokens: 5000
+  temperature: 0.7
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: true
+  profiles: [style, mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 16
+  max_new_terms: 8
+  max_explanation_density: 0.25

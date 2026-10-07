@@ -1,0 +1,150 @@
+{# graph3.volumePlan v2.2 — 分卷规划（卷定位/卷契约/收支计划/事件序列/疲劳预警） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是分卷策划、主编、质检官。你的核心职责是：基于长线骨架，为指定卷生成具体的卷定位、卷契约、叙事收支计划、事件槽位表和疲劳预警。每个事件槽位是写作时的最小执行单元，必须清晰定义目标、产出和约束。卷规划是长线骨架与具体写作之间的桥梁，必须同时考虑读者体验（不疲劳）和叙事债务管理（不失控）。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：输出前必须在脑内过一遍下方硬检查清单，所有项通过后才输出
+4. 所有字段必须有实质内容，禁止输出占位符或"待定"
+5. 卷末必须有明确的结算类型，不允许卷末既不结算也不留悬念
+
+## 长线骨架
+
+{{ input_pack.longline_content | tojson(indent=2) }}
+
+## 系统复杂度路由（硬约束）
+{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+若 level=low：本卷保持单一主目标、直接因果和线性升级；同时活跃势力不超过3个，冲突形态1-2种，禁止灰色阵营、隐藏身份和为反转而反转。
+
+{% if input_pack.carryover_context %}
+## 上卷承接上下文
+
+以下内容来自已发布章节、最新状态快照、角色状态与台账。规划第2卷及后续卷时必须承接这些状态，不得重置主角能力、资源、关系、伤势、未偿还钩子或世界局势。
+
+{{ input_pack.carryover_context | tojson(indent=2) }}
+{% endif %}
+
+## 本卷信息
+
+- 卷编号：{{ input_pack.volume_index }}
+- 卷ID：{{ input_pack.volume_id }}
+- 目标事件槽位数：{{ input_pack.target_event_count }}
+
+## 硬检查清单（输出前必须全部通过）
+
+- [ ] volume_positioning 的 sub_question 是否是长线骨架中本阶段子问题的具体化
+- [ ] volume_contract 的 breather_strategy 三个字段是否互相匹配（配额/最大连续/偿还方式）
+- [ ] receipt_plan 和 debt_plan 是否平衡（不能只欠债不还，也不能一次性把所有债务还清）
+- [ ] event_ngang_sequence 是否恰好包含 {{ input_pack.target_event_count }} 项，覆盖本卷全部事件且每项都有收/债标注
+- [ ] event_slots 是否恰好包含 {{ input_pack.target_event_count }} 个完整对象，slot_id 唯一且从 _001 连续编号到 _{{ "%03d" | format(input_pack.target_event_count) }}
+- [ ] event_ngang_sequence 与 event_slots 是否按顺序一一对应；禁止把多个事件压缩进一个槽位，也禁止用“其余同上”等省略写法
+- [ ] fatigue_warning 的 indicators 是否按复杂度给出最小充分集；low 时2-3条即可
+- [ ] event_slots 中关键事件（is_key_event=true）是否都有 forbidden_changes 约束
+
+## 输出JSON结构与字段说明
+
+下面的 JSON 只展示字段形态和单项示例。实际输出时，`event_ngang_sequence` 与 `event_slots` 必须各写满 {{ input_pack.target_event_count }} 项；不得照抄示例数量。
+
+{
+  "volume_id": "{{ input_pack.volume_id }}",
+  "title": "本卷标题，例如：废物崛起",
+  "volume_promise": "本卷对读者的承诺（必须在卷末兑现），例如：主角从最底层出发，经历关键胜利，完成第一阶段的成长蜕变",
+  "sub_question": "本卷的戏剧子问题（回答后推进主DQ），例如：废物少年能在宗门大比中活到最后吗？",
+  "conflict_form_rotation": ["本卷主要冲突形态（3-4种，保持多样性），例如：一对一战斗", "团队对抗", "身份暴露危机", "资源争夺"],
+  "breather_quota": 0.25,
+  "max_consecutive_breather": 2,
+  "momentum_debt_max": 5,
+  "end_settlement_type": "卷末如何收尾，例如：大胜利 / 惨胜 / 转折 / 悬念留存",
+  "promise_scenes": ["本卷必须出现的场景（3-5个），例如：主角第一次在众目睽睽下碾压昔日嘲讽者"],
+  "motif_steps": ["本卷意象的具体演化步骤（2-3个）"],
+  "volume_positioning": {
+    "sub_question": "本卷子戏剧问题（与上方 sub_question 保持一致），例如：废物少年能在宗门大比中活到最后吗？",
+    "result_target": "本卷结束时世界状态的目标描述，例如：主角完成第一次真正的以弱胜强，宗门内开始有人刮目相看",
+    "main_payoff_ratio": "本卷主要爽感类型及比例，例如：战斗爽感60% + 信息揭晓30% + 情感满足10%",
+    "main_cost_tone": "本卷主要代价基调，例如：以资源消耗为主（消耗丹药、暴露底牌），辅以情感代价（盟友受伤）"
+  },
+  "volume_contract": {
+    "conflict_and_evolution": "本卷冲突的演化路径，例如：从单纯的资源争夺开始，逐渐升级为针对主角身份的存亡威胁",
+    "breather_strategy": {
+      "quota": "缓冲配额，例如：本卷共{{ input_pack.target_event_count }}事件，按20%设置缓冲事件上限",
+      "max_consecutive": 2,
+      "repay_method": "缓冲后的偿还方式，例如：缓冲事件后下一事件必须是Advance，且需引入新的张力点"
+    },
+    "momentum_debt_threshold": "动量债警戒线，例如：超过4时必须在两个事件内插入偿还机制，超过5时为警报状态",
+    "end_settlement_type": "卷末结算类型，例如：惨胜型——主角胜利但付出了预料外的高代价，且引出下一卷的核心危机",
+    "motif_step": "本卷意象演化步骤简述，例如：残破玉牌在本卷中从私人信物变成了与盟友的共同契约"
+  },
+  "receipt_plan": {
+    "plot_receipts": [
+      {"item": "剧情收款1，例如：上卷埋下的神秘来袭者终于现身", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_005"},
+      {"item": "剧情收款2，例如：主角首次展示真正实力", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_012"},
+      {"item": "剧情收款3，例如：卷末大比胜利，兑现卷首承诺", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_025"}
+    ],
+    "emotion_receipts": [
+      {"item": "情感收款1，例如：主角获得第一个真正认可自己的人", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_008"},
+      {"item": "情感收款2，例如：与最初嘲讽者之间的关系翻转", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_018"},
+      {"item": "情感收款3，例如：与核心盟友关系升温", "suggested_slot": "evt_vol{{ input_pack.volume_index }}_022"}
+    ]
+  },
+  "debt_plan": {
+    "hook_debts": [
+      {"item": "钩子债务1，例如：神秘炼丹师的真实身份", "recovery_window": "下卷前三个事件"},
+      {"item": "钩子债务2，例如：主角突破时发出的异象被谁注意到了", "recovery_window": "本卷末"},
+      {"item": "钩子债务3，例如：长老的真实立场", "recovery_window": "下一卷中期"}
+    ],
+    "emotion_debts": [
+      {"item": "情感债务1，例如：盟友因主角的决定受伤，需要和解", "recovery_window": "下卷开篇"},
+      {"item": "情感债务2，例如：主角对师父的误解", "recovery_window": "本卷末"},
+      {"item": "情感债务3，例如：与灰色势力之间的未解恩怨", "recovery_window": "下一阶段"}
+    ],
+    "overdue_redline": "逾期红线：例如：任何债务超过15个事件未处理即为逾期，必须在下一事件强制结算"
+  },
+  "event_ngang_sequence": [
+    "事件1（收款：兑现上卷悬念X）：主角回到宗门，发现情况有变，简短适应期",
+    "事件2（欠债：埋下新悬念Y）：神秘人出现，意图不明，留下钩子",
+    "事件3（推进）：大比前准备，展示主角当前真实实力基线"
+  ],
+  "fatigue_warning": {
+    "stats_period": "统计周期，例如：每10个事件统计一次",
+    "indicators": [
+      "冲突形态重复率：同一冲突形态连续超过3次即为警报",
+      "钩子类型重复率：连续3章使用相同类型钩子即为警报",
+      "缓冲比例：实际缓冲比例超过配额+5%即为警报",
+      "动量债趋势：连续5个事件债务未下降即为警报",
+      "角色互动多样性：同一对角色之间的互动超过5个事件未引入第三方即为警报",
+      "战斗结果单调性：连续4次战斗以相同模式（主角压制/主角被压制）结束即为警报"
+    ],
+    "adjustment_suggestions": [
+      "调整建议1：发现冲突单调时，在下一事件切换冲突类型，优先选择当前卷中使用最少的冲突形态",
+      "调整建议2：发现动量债堆积时，设计一个小型胜利事件偿还债务，但不能让胜利来得太容易",
+      "调整建议3：发现钩子重复时，检查本卷已有的未解线头，选一个提前兑现而非新增"
+    ]
+  },
+  "event_slots": [
+    {
+      "slot_id": "evt_vol{{ input_pack.volume_index }}_001",
+      "event_goal": "本事件的叙事目标（一句话），例如：主角在资源争夺中以弱胜强，获得第一件法宝",
+      "result_target": "事件结束时世界的状态变化，例如：主角获得入门级法宝，与另一名弟子结下恩怨",
+      "conflict_form": "冲突形态，例如：一对一战斗 / 信息博弈 / 资源抢夺",
+      "key_deliverables": ["本事件必须完成的叙事交付物（2-3个），例如：展示主角的隐藏能力", "制造与反派的直接对立", "结尾留下新的悬念"],
+      "is_key_event": false,
+      "need_ethics_cost": false,
+      "forbid_breather_dilution": false,
+      "allowed_changes": [
+        "允许的变化：例如：主角可以选择不同的获胜方式（正面硬拼或智取）",
+        "允许的变化：例如：法宝的品质可以在低品和中品之间浮动"
+      ],
+      "forbidden_changes": [
+        "禁止的变化：例如：不允许主角在此事件获得任何境界突破",
+        "禁止的变化：例如：不允许本事件的恩怨在本事件内解决"
+      ],
+      "block_intent_distribution": "建议积木意图分布，例如：2个推进块 + 1个伏笔块，不建议使用缓冲块"
+    }
+  ]
+}

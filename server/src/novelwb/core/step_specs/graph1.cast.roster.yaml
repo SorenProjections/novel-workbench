@@ -1,0 +1,34 @@
+step_key: graph1.cast.roster
+graph: "1"
+schema_version: v1
+description: "核心角色阵容索引"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph1.castRoster
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 4000
+  temperature: 0.55
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 16
+  max_new_terms: 4
+  max_explanation_density: 0.2

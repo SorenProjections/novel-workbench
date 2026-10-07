@@ -1,0 +1,11 @@
+prompt_key: graph4.eventBudget
+version: "3.0"
+description: "事件体量与展开深度"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_slot
+  - input_pack.volume_content
+  - input_pack.is_key_event
+  - input_pack.context_meta
+output_format: json

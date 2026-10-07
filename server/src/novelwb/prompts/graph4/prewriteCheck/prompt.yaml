@@ -1,0 +1,6 @@
+prompt_key: graph4.prewriteCheck
+version: "1.1"
+description: "正文前一致性与清单化风险检查"
+shared_fragments: [json_output_contract]
+variables: [input_pack.event_slot, input_pack.event_route, input_pack.world_pulse, input_pack.event_expansion, input_pack.event_plan, input_pack.latest_snapshot]
+output_format: json

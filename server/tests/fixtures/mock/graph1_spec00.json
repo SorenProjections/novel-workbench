@@ -1,0 +1,5 @@
+{
+  "response_text": "{\"genre\": \"群像悬疑\", \"complexity_profile\": {\"level\": \"low\"}, \"main_promise\": \"通过付出代价查清渡口停航原因\", \"lens\": \"第三人称贴身视角\", \"lens_climate\": {\"emotion_base\": \"克制\"}, \"type_contract\": {\"causality\": \"线索可追溯\"}, \"taboo_words\": [\"时间倒流\"], \"budget\": {\"total_events\": 30, \"events_per_volume\": 10}, \"core_hook\": \"药船被困渡口\", \"protagonist_core\": {\"want\": \"让药送达\"}, \"scale_budget\": {\"max_entities_per_event\": 4, \"avg_event_chars\": 330}, \"breather_policy\": {\"quota_ratio\": 0.2}, \"writing_dictionary\": {\"chapter_intents\": {\"Advance\": \"推进\"}}, \"forbidden_zones\": [\"无代价解围\"], \"self_check\": {\"risks\": [\"线索重复\"]}}",
+  "input_tokens": 120,
+  "output_tokens": 80
+}

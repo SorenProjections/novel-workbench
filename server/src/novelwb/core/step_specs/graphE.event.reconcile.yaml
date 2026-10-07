@@ -1,0 +1,30 @@
+step_key: graphE.event.reconcile
+graph: "E"
+schema_version: v1
+description: "多实体、故事线、资产生命周期与正文证据的Reconcile对账"
+input_schema: ObservedDelta
+output_schema: DiffReport
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphE.reconcile
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: enabled
+  reasoning_effort: max
+  response_format: json_object
+  max_tokens: 5000
+  temperature: 0.2
+
+hardlint:
+  profile: event_commit
+  enabled_rule_groups: [A, B, C, D, E, G]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [event_boundary]
+
+rag:
+  enabled: false

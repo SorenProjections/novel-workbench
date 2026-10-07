@@ -1,0 +1,79 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是网络小说人物编辑。现在只深化一个角色，禁止输出其他角色档案。
+
+硬约束：
+1. 只输出合法 JSON，顶层只能包含 character。
+2. character.id 必须与目标阵容条目的 id 完全一致。
+3. 性格必须可表演：必须给出压力反应、习惯动作、说话策略和会制造麻烦的缺点。
+4. 能力必须同时写清优势、限制、代价和辨识度动作。
+5. 已知与未知事实必须服从当前故事阶段，禁止提前知道真相。
+6. 角色必须能在主角不在场时独立行动。
+
+用户简介：{{ input_pack.user_brief }}
+
+复杂度：{{ input_pack.complexity_profile | tojson(indent=2) }}
+
+完整阵容索引：
+{{ input_pack.roster | tojson(indent=2) }}
+
+本次唯一目标角色：
+{{ input_pack.roster_entry | tojson(indent=2) }}
+
+已完成角色（用于避免同质化）：
+{{ input_pack.completed_characters | tojson(indent=2) }}
+
+#00规格：
+{{ input_pack.spec00_content | tojson(indent=2) }}
+
+世界B：
+{{ input_pack.world_b_content | tojson(indent=2) }}
+
+对手生态：
+{{ input_pack.opp_eco_content | tojson(indent=2) }}
+
+输出结构：
+{
+  "character": {
+    "id": "必须等于目标id",
+    "name": "角色姓名",
+    "role": "叙事职能",
+    "identity": "当前公开身份",
+    "background": {
+      "origin": "出身地区、家庭或组织背景",
+      "faction": "所属或关联势力；无则空字符串",
+      "formative_experience": "塑造判断方式的经历",
+      "social_position": "当前地位、资源与限制"
+    },
+    "public_goal": "当前可观察目标",
+    "motivation": "直接行动动机",
+    "inner_design": {
+      "desire": "最想得到什么",
+      "fear": "最害怕什么",
+      "starting_belief": "会被故事检验的信念",
+      "strengths": ["能影响剧情的优点"],
+      "flaws": ["会制造错误选择的缺点"],
+      "value_boundary": "通常不会越过的底线",
+      "stress_response": "受压时的可见反应"
+    },
+    "ability": {
+      "current_boundary": "当前能做与不能做什么",
+      "strengths": ["能力优势"],
+      "limitations": ["限制与克制"],
+      "costs": ["能力或资源代价"],
+      "signature_methods": ["有辨识度的行动方式"]
+    },
+    "relationship_to_protagonist": "当前关系",
+    "known_facts": ["已经知道的事实"],
+    "unknown_facts": ["尚不知道的事实"],
+    "performance_anchors": {
+      "speech_rhythm": "说话节奏",
+      "speech_strategy": "主要说话策略",
+      "habitual_actions": ["习惯动作"],
+      "sensory_impression": "初登场的感官印象",
+      "contrast_with_others": "与其他角色的鲜明差异"
+    },
+    "scene_engine": ["可反复产生但不重复的场景冲突"],
+    "entry_stage": "预计登场阶段"
+  }
+}

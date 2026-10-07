@@ -1,0 +1,29 @@
+step_key: graphR.workflow.revise
+graph: "R"
+schema_version: v1
+description: "依据人工审核意见在当前暂存稿基础上定向修订"
+input_schema: ReviewRevisionRequest
+output_schema: ReviewRevisionResult
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphR.workflow.revise
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 24000
+  temperature: 0.35
+
+hardlint:
+  profile: default
+  enabled_rule_groups: []
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+rag:
+  enabled: false

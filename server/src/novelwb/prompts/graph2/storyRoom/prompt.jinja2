@@ -1,0 +1,123 @@
+{# graph2.storyRoom v2.0 - 全书故事核心，不在本步生成地图 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是长篇小说总编剧。长线骨架已经确定类型承诺和阶段节点，本步只深化全书故事核心：总纲因果、主要伏笔、核心角色成长线和群像关系。主要地图由下一步独立生成，不要在本输出中夹带地图清单。
+
+## 设计原则
+1. 总纲必须形成可持续推进的因果链：主角主动目标、阶段阻力、关键选择、代价、不可逆变化和终局兑现。
+2. 伏笔必须有载体、误读空间、递进信息和回收窗口，禁止只有“以后揭晓”。
+3. 每名主要角色必须有自己的目标与行动线，不得只围绕主角待机。
+4. 成长必须通过选择、失败、关系变化和能力代价可见，不能只写心理概括。
+5. low 复杂度保持直接因果和清晰目标，但人物反应、关系与爽点铺垫仍需具体。
+6. 不新增无用术语、套娃阴谋和与主线无关的角色。
+
+## 输入
+规格：{{ input_pack.spec00_content | tojson(indent=2) }}
+
+世界硬锚：{{ input_pack.world_a_content | tojson(indent=2) }}
+
+核心角色：{{ input_pack.cast_content | default({}) | tojson(indent=2) }}
+
+长线骨架：{{ input_pack.longline_core | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出结构
+{
+  "master_story_design": {
+    "central_dramatic_question": "全书核心问题",
+    "story_engine": "能够持续制造目标、阻力、选择、代价与新局面的机制",
+    "opening_state": "主角开篇能力、资源、关系、处境和认知",
+    "inciting_change": "迫使主角行动的具体变化",
+    "active_goal_chain": [
+      {"stage_id": "引用长线阶段ID", "goal": "主动目标", "pressure": "主要阻力", "choice": "关键选择", "cost": "代价", "irreversible_change": "不可逆变化", "payoff": "阶段满足"}
+    ],
+    "main_conflict_escalation": ["冲突如何逐级扩大但保持直接因果"],
+    "emotional_progression": ["主角与核心关系的分阶段情绪变化"],
+    "climax_design": {"location_requirement": "留给地图步骤落实的空间要求", "choice": "终局选择", "cost": "终局代价", "promise_payoff": "类型承诺如何兑现"},
+    "ending_state": "结局时能力、资源、关系、身份、认知与世界局面的变化"
+  },
+  "major_foreshadowing": [
+    {
+      "hook_id": "hook_稳定ID",
+      "name": "伏笔名",
+      "story_question": "制造的问题",
+      "truth": "作者层真相",
+      "visible_carriers": ["动作/物件/规则异常/对话缺口/场景痕迹"],
+      "plant_stage_id": "首次埋设阶段",
+      "reinforcement_plan": [{"stage_id": "阶段ID", "new_information": "比上次多透露的信息", "surface_interpretation": "读者当时可形成的解释"}],
+      "payoff_window": "回收窗口",
+      "payoff_action": "通过什么行动或后果回收",
+      "involved_character_ids": ["角色ID"],
+      "early_reveal_guard": "禁止提前说破的内容"
+    }
+  ],
+  "character_growth_arcs": [
+    {
+      "character_id": "必须引用核心角色ID",
+      "name": "角色名",
+      "story_role": "全书叙事职能",
+      "background_pressure": "出身与旧经历持续施加的压力",
+      "external_goal": "主动追求",
+      "inner_need": "真正需要改变之处",
+      "desire": "欲望",
+      "fear": "恐惧",
+      "false_belief": "错误信念",
+      "strengths": ["优势"],
+      "flaws": ["会制造后果的缺点"],
+      "ability_start": "初始能力边界与代价",
+      "relationship_anchors": [{"other_character_id": "角色ID", "start_dynamic": "初始关系", "end_dynamic": "终局关系"}],
+      "growth_stages": [{"stage_id": "阶段ID", "pressure": "压力", "choice": "选择", "cost": "代价", "behavioral_change": "可见行为变化", "ability_change": "能力变化", "relationship_change": "关系变化"}],
+      "climax_choice": "终局主动选择",
+      "end_state": "终局多维状态",
+      "voice_markers": ["语言节奏或行为辨识点"]
+    }
+  ],
+  "ensemble_relationship_arcs": [
+    {
+      "relationship_id": "rel_稳定ID",
+      "character_ids": ["角色A", "角色B"],
+      "start_dynamic": "初始关系",
+      "shared_interest": "可合作基础",
+      "core_friction": "持续摩擦",
+      "turning_stages": [{"stage_id": "阶段ID", "event": "关系事件", "visible_change": "行为上的变化"}],
+      "end_dynamic": "终局关系",
+      "forbidden_jump": "不得无铺垫跨越的变化"
+    }
+  ],
+  "narrative_line_registry": [
+    {
+      "line_id": "line_稳定ID",
+      "line_type": "main / subplot / hidden / relationship / faction / item / ecology",
+      "name": "故事线名",
+      "owner_ids": ["主动推动该线的角色、势力或资产ID"],
+      "independent_goal": "即使主角不介入，该线上的实体仍会追求什么",
+      "visibility": "明线 / 暗线 / 作者层",
+      "lifecycle": "seed / active / converging / paid_off / dormant / retired",
+      "start_state": "开篇状态",
+      "progression_stages": [{"stage_id": "长线阶段ID", "pressure": "自然发展压力", "movement": "推进、碰撞、误导或暂压", "visible_trace": "读者可见载体"}],
+      "collision_line_ids": ["会发生碰撞的其他故事线ID"],
+      "convergence_or_payoff": "汇流或回收方式",
+      "retirement_condition": "何时可结束或转为背景"
+    }
+  ],
+  "key_item_arcs": [
+    {"item_id": "item_稳定ID", "name": "关键物品", "story_function": "线索/权力/关系/规则载体", "custody_chain": [{"stage_id": "阶段ID", "holder_id": "持有者ID", "goal": "持有者为何使用或隐藏", "state_change": "物品状态变化"}], "reveals": ["分层揭示"], "cost_or_limit": "使用代价", "payoff": "最终作用"}
+  ],
+  "major_set_piece_seeds": [
+    {"set_piece_id": "set_稳定ID", "name": "大场面", "stage_window": "阶段窗口", "participating_line_ids": ["线ID"], "build_up_requirements": ["可跨多个事件的铺垫"], "non_protagonist_arcs": ["主角登场前后其他人物与势力的行动弧"], "spatial_requirement": "交给地图步骤落实", "aftermath_scope": ["人物、势力、地点、物件、舆论后果"]}
+  ],
+  "asset_lifecycle_policy": {
+    "persistent": "贯穿全书资产何时必须保留",
+    "volume": "卷级资产如何继承或结算",
+    "transient": "过渡人物、物品、场景和线索何时创建与退休",
+    "promotion": "临时资产何时升级为长期资产",
+    "retirement": "退场时必须留下哪些状态和影响"
+  },
+  "entity_autonomy_rules": ["人物、势力、生物、物件和环境系统不得只在主角出现时行动的约束"],
+  "story_room_rules": {
+    "must_preserve": ["后续卷纲不得破坏的核心因果、成长边界和伏笔时序"],
+    "flexible_zones": ["允许卷级调整的内容"],
+    "anti_bloat_rules": ["限制无效角色、设定、支线和秘密的规则"]
+  }
+}

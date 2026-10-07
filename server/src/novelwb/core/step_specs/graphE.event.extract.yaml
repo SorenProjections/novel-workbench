@@ -1,0 +1,29 @@
+step_key: graphE.event.extract
+graph: "E"
+schema_version: v1
+description: "从正文抽取多实体状态、故事线、议程、资产生命周期与时间线变化"
+input_schema: EventDraft
+output_schema: ObservedDelta
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphE.extract
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 16000
+  temperature: 0.2
+
+hardlint:
+  profile: event_commit
+  enabled_rule_groups: [A, G]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [event_boundary]
+
+rag:
+  enabled: false

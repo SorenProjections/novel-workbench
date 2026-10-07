@@ -1,0 +1,34 @@
+step_key: graph1.opp.eco
+graph: "1"
+schema_version: v1
+description: "对手生态OppEco生成（四层压迫/灰度势力/进化机制）"
+input_schema: CreateRunRequest
+output_schema: AuthObject
+commit_type: auth_patch
+is_key_artifact: false
+
+llm:
+  prompt_key: graph1.oppEco
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 10000
+  temperature: 0.8
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A, B, D, E]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [style, mechanism]
+
+rag:
+  enabled: false
+
+budget:
+  max_new_entities: 15
+  max_new_terms: 10
+  max_explanation_density: 0.3

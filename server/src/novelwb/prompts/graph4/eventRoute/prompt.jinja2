@@ -1,0 +1,24 @@
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是事件阅读路由器。依据事件槽、最新事实状态和已裁剪资产，只选择本事件真正需要展开的叙事维度。不要为了齐全而全选，也不要默认只看主角。
+
+可选 expansion_routes：plot、character、relationship、faction、item、ecology、mystery、set_piece、aftermath、ensemble。
+
+输入：
+事件槽：{{ input_pack.event_slot | tojson(indent=2) }}
+事件体量：{{ input_pack.budget | tojson(indent=2) }}
+最新状态：{{ input_pack.latest_snapshot | tojson(indent=2) }}
+本卷资产：{{ input_pack.volume_content | tojson(indent=2) }}
+上下文追踪：{{ input_pack.context_meta | tojson(indent=2) }}
+
+输出：
+{
+  "narrative_weight": "small / standard / large / epic",
+  "expansion_routes": ["必须选择2-6项"],
+  "active_line_ids": ["本事件实际推进、碰撞或暂时压住的故事线ID"],
+  "entity_agenda_ids": ["本事件需要推演的角色、势力、生物或组织议程ID"],
+  "asset_ids": ["需要读取的物品、生态、地点或大场面资产ID"],
+  "offscreen_required": true,
+  "routing_reasons": [{"route": "faction", "reason": "为什么本事件必须展开", "expected_effect": "应产生什么叙事作用"}],
+  "routes_not_selected": [{"route": "未选择维度", "reason": "为什么本次不读"}]
+}

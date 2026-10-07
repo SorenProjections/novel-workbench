@@ -1,0 +1,12 @@
+prompt_key: graphE.fix
+version: "3.0"
+description: "无标记连续正文的锚点/场景级分级修复"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.event_id
+  - input_pack.draft_text
+  - input_pack.violations
+  - input_pack.fix_level
+  - input_pack.patch_instructions
+output_format: json

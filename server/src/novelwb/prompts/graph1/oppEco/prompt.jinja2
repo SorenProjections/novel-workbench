@@ -1,0 +1,134 @@
+{# graph1.oppEco v2.1 — 对手生态OppEco（对立力量的完整生态） #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+## 角色定义
+
+你是对手与压迫系统设计师、主编、质检官。你的核心职责是：基于已建立的世界观层级，构建与用户复杂度要求相匹配的对立生态。对手用于标记主角成长刻度；简单爽文允许动机直接、登场即结算的功能型对手，不得强行复杂化。
+
+## 全局规则
+
+1. **全程只用中文，JSON字段名保持英文，但所有字符串内容必须是中文**
+2. 输出必须是合法JSON，不含任何注释或多余文字
+3. 硬检查优先：输出前必须在脑内过一遍下方硬检查清单，所有项通过后才输出
+4. 所有字段必须有实质内容，禁止输出占位符或"待定"
+5. 对手行为要有最小因果逻辑，但复杂度必须服从 #00 complexity_profile
+6. complexity_profile.level=low 时：终极对手可以只是公开的最强竞争者；tier2_factions 最多3个；gray_forces 必须为空数组；oppression_spectrum 只保留2-4种直接形式；禁止隐藏身份、幕后收割、道德拷问、盟友背叛、制度阴谋和套娃靠山
+7. 模板中的数量和示例不是强制扩写许可，与用户禁令冲突时必须缩减或返回空数组
+
+## #00规格
+
+{{ input_pack.spec00_content | tojson(indent=2) }}
+
+## 世界A层
+
+{{ input_pack.world_a_content | tojson(indent=2) }}
+
+## 世界B层
+
+{{ input_pack.world_b_content | tojson(indent=2) }}
+
+## 力量定律层（POW_L）
+
+{{ input_pack.pow_l_content | tojson(indent=2) }}
+
+## 力量结构层（POW_S）
+
+{{ input_pack.pow_s_content | tojson(indent=2) }}
+
+## 力量表现层（POW_E）
+
+{{ input_pack.pow_e_content | tojson(indent=2) }}
+
+## 硬检查清单（输出前必须全部通过）
+
+- [ ] tier1_boss 的复杂度是否符合 complexity_profile；low 时 reveals 可为公开升级节点，不得制造身份反转
+- [ ] tier2_factions 中是否有至少一个"早期霸凌者→后期垫脚石"的完整弧线
+- [ ] gray_forces 是否符合复杂度预算；low 时必须为空数组
+- [ ] oppression_spectrum 数量是否符合复杂度预算；low 时只保留2-4种直接压迫
+- [ ] evolution_mechanism 是否说明了对手如何随主角成长而升维（不能对手永远停在原地）
+- [ ] self_check 的 flatness_risks 是否指出了最容易让对手变"纸片人"的两个写作陷阱
+
+## 输出JSON结构与字段说明
+
+{
+  "tier1_boss": {
+    "name": "终极BOSS名称（可以是势力名）",
+    "identity": "公开身份或真实本质；low 时禁止表里两层身份",
+    "motivation": "核心动机，例如：为了逆转天命，复活被封印的同类",
+    "power_ceiling": "力量上限（必须超过主角当前能触及的上限）",
+    "reveals": ["阶段升级节点；low 时只写公开实力或公开目标的升级，不写身份反转"]
+  },
+  "tier2_factions": [
+    {
+      "name": "中层对手势力名",
+      "role": "在主角成长弧中的功能，例如：早期霸凌者→中期壁垒→后期盟友",
+      "peak_threat_volume": "在第几卷对主角威胁最大",
+      "defeat_condition": "如何才能真正击败该势力"
+    }
+  ],
+  "tier3_mobs": {
+    "archetypes": ["杂鱼的原型类型（3-5种），例如：纨绔子弟型、嫉妒天才型、奸商型、腐败官员型"],
+    "density": "每卷大约出现几个此类对手",
+    "purpose": "这些对手在叙事中的功能，例如：提供早期爽点，验证主角当前实力级别"
+  },
+  "gray_forces": [
+    {
+      "name": "灰色势力名",
+      "ambiguity": "仅 medium/high 使用；low 时 gray_forces 返回空数组",
+      "narrative_function": "在故事中的叙事功能，例如：揭示主角立场的局限性，逼迫主角做出道德选择"
+    }
+  ],
+  "evolution_mechanism": "对手生态的演化逻辑，例如：每次主角升维，对手集体升级；初期欺压主角的人后来成为主角的垫脚石，但不能简单复仇——要有代价",
+  "oppression_spectrum": [
+    {
+      "form": "压迫形式，例如：直接武力碾压",
+      "reader_payoff": "读者从这种压迫中获得的情感回报，例如：积累愤怒，为后续爆发蓄力",
+      "protagonist_resistance_cost": "主角抵抗这种压迫必须付出的代价，例如：消耗珍贵丹药，暴露隐藏能力"
+    },
+    {
+      "form": "压迫形式2：制度性剥夺，例如：被取消参赛资格",
+      "reader_payoff": "读者情感回报，例如：感受到不公正，产生强烈共情",
+      "protagonist_resistance_cost": "主角代价，例如：需要找到替代途径，消耗额外时间与资源"
+    },
+    {
+      "form": "压迫形式3：信息封锁，例如：关键情报被人为隐瞒",
+      "reader_payoff": "读者情感回报，例如：悬疑感，与主角同步感受信息不对称的焦虑",
+      "protagonist_resistance_cost": "主角代价，例如：必须冒险去主动探查，承担暴露风险"
+    },
+    {
+      "form": "压迫形式4：关系破坏，例如：盟友被策反或离间",
+      "reader_payoff": "读者情感回报，例如：背叛感与愤怒，强化对反派的仇恨",
+      "protagonist_resistance_cost": "主角代价，例如：孤立无援，需要付出更大代价重建信任"
+    },
+    {
+      "form": "压迫形式5：资源掠夺",
+      "reader_payoff": "读者情感回报，例如：剥夺感，让读者更期待主角的反击",
+      "protagonist_resistance_cost": "主角代价，例如：修炼进度被迫中断，需要重新积累"
+    },
+    {
+      "form": "压迫形式6：身份污名化",
+      "reader_payoff": "读者情感回报，例如：共情主角的屈辱感，渴望翻盘",
+      "protagonist_resistance_cost": "主角代价，例如：无法公开使用真实身份，行动受限"
+    },
+    {
+      "form": "压迫形式7：亲人威胁",
+      "reader_payoff": "读者情感回报，例如：保护欲与愤怒并发，情绪强度最高",
+      "protagonist_resistance_cost": "主角代价，例如：不得不妥协，吞下屈辱换取保护"
+    },
+    {
+      "form": "压迫形式8：规则绑架，例如：利用门规或法律陷害",
+      "reader_payoff": "读者情感回报，例如：感受到制度的虚伪性，渴望主角找到打破规则的方式",
+      "protagonist_resistance_cost": "主角代价，例如：必须在规则内找破绽，时间成本极高"
+    }
+  ],
+  "self_check": {
+    "flatness_risks": [
+      "对手纸片化风险1，例如：反派只会嘲讽和命令手下，没有展示出真正的智慧或能力，读者无法理解主角为何忌惮",
+      "对手纸片化风险2，例如：灰色势力随着剧情推进逐渐明确站队，丧失了道德模糊性，失去叙事张力"
+    ],
+    "correction_reminders": [
+      "修正提醒1，例如：每隔5个事件，让对手展示一次超出主角预期的智慧或手段",
+      "修正提醒2，例如：灰色势力在每卷末至少有一次让读者无法判断其善恶的行动"
+    ]
+  }
+}

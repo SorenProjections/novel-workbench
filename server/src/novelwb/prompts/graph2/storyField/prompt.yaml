@@ -1,0 +1,18 @@
+prompt_key: graph2.storyField
+version: "1.0"
+description: "全书StoryRoom单逻辑文件生成"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+  - input_pack.cast_content
+  - input_pack.longline_core
+  - input_pack.approved_story_room
+  - input_pack.complexity_profile
+  - input_pack.target_key
+  - input_pack.target_label
+  - input_pack.target_character
+  - input_pack.target_relation
+  - input_pack.target_entry
+output_format: json

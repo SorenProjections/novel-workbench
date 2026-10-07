@@ -1,0 +1,12 @@
+prompt_key: graph1.powE
+version: "2.1"
+description: "力量表现层POW_E"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.spec00_content
+  - input_pack.world_a_content
+  - input_pack.pow_l_content
+  - input_pack.pow_s_content
+  - input_pack.complexity_profile
+output_format: json

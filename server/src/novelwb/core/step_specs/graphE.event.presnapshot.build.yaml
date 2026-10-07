@@ -1,0 +1,29 @@
+step_key: graphE.event.presnapshot.build
+graph: "E"
+schema_version: v1
+description: "Pre-Event Snapshot构建（从权威层切片生成事件前状态快照）"
+input_schema: CreateRunRequest
+output_schema: StateSnapshot
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graphE.presnapshot
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-pro
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 1500
+  temperature: 0.1
+
+hardlint:
+  profile: event_commit
+  enabled_rule_groups: [A, G]
+
+regression:
+  required_on_key_artifact: false
+  profiles: [event_boundary]
+
+rag:
+  enabled: false

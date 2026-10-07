@@ -1,0 +1,55 @@
+{# graph4.namecheck v2.0 — 命名去重检查 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是一位负责把关命名质量的编辑。检查本事件块级大纲中涉及的所有人名、地名、术语、技法名称，与已有BIBLE中的命名进行对比，识别以下问题：
+1. 与已有命名高度相似（可能造成读者混淆）
+2. 与禁用词列表冲突
+3. 音感或含义与世界观不符
+4. 与当前 status_cards 中的情节、人物、场景、势力、道具、规则卡名称冲突
+
+只检查本事件会出现或新引入的命名，不要扫描全量设定后输出无关风险。
+
+## 上下文编译追踪
+
+{{ input_pack.context_meta | tojson(indent=2) }}
+
+## 事件槽位
+
+{{ input_pack.event_slot | tojson(indent=2) }}
+
+## 块级大纲（包含可能的命名）
+
+{{ input_pack.block_plan | tojson(indent=2) }}
+
+## BIBLE中已有命名（用于去重）
+
+{{ input_pack.bible_content | tojson(indent=2) }}
+
+## REG中本事件相关注册实体
+
+{{ input_pack.reg_content | tojson(indent=2) }}
+
+## 角色设定中已有命名
+
+{{ input_pack.char_content | tojson(indent=2) }}
+
+## 输出JSON结构与字段说明
+
+{
+  "passed": true,
+  "collisions": [
+    {
+      "new_name": "大纲中出现的新名称（如果有问题）",
+      "conflict_type": "similar / forbidden / style_mismatch / card_collision",
+      "existing_name": "与之冲突的已有名称（如适用）",
+      "evidence": "造成混淆的证据，例如：读音只差一个字，且同属同一势力",
+      "suggestion": "建议的替代名称"
+    }
+  ],
+  "style_violations": [
+    "命名风格违规说明（如有），例如：'约翰'这个名字与东方玄幻世界观不符"
+  ],
+  "checked_scope": [
+    "本次实际检查的名称范围，例如：event_slot 中的新地名、block_plan 中的新招式、status_cards 中的相关势力名"
+  ]
+}

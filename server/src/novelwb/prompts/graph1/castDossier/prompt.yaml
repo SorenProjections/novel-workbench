@@ -1,0 +1,15 @@
+prompt_key: graph1.castDossier
+version: "1.0"
+description: "单个核心角色详细档案"
+shared_fragments:
+  - json_output_contract
+variables:
+  - input_pack.user_brief
+  - input_pack.spec00_content
+  - input_pack.world_b_content
+  - input_pack.opp_eco_content
+  - input_pack.complexity_profile
+  - input_pack.roster
+  - input_pack.roster_entry
+  - input_pack.completed_characters
+output_format: json

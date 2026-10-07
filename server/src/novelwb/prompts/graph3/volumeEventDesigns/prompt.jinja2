@@ -1,0 +1,61 @@
+{# graph3.volumeEventDesigns v1.0 - 逐事件中心与资产引用 #}
+{% include '_shared/json_output_contract.jinja2' %}
+
+你是本卷执行编辑。当前输入可能只是整卷事件槽的一批窗口；为本批 `event_slots` 中的每个槽生成一条且仅一条事件设计。这里只确定事件中心、线索生命周期和按需资产引用，不预设章节字数与切章点；Graph4 会在临写前结合最新状态动态路由并多轮展开。
+
+## 强制规则
+1. event_designs 必须覆盖每个 event_slot.slot_id，不得遗漏、重复或新增槽位。
+2. character_focus_ids 必须引用 volume_cast_cards.character_id，建议1-4名。
+3. location_ids 必须引用 volume_map_system.locations.location_id，建议1-3处，移动事件同时列起点和终点。
+4. scene_asset_ids 和 foreshadowing_ids 可以为空，但非空时必须精确引用已有ID。
+5. 本事件只设一个戏剧中心；必须写内容应可落成动作、对话、发现、关系反应或后果。
+6. 不在此处写通用“多用对话、加强环境”等空泛写法建议。
+7. active_line_ids、entity_agenda_ids、item_track_ids、set_piece_id、transient_asset_ids 只能按本事件需要引用，不得全量加载。
+8. expansion_routes 只选择真正需要在正文前展开的维度；大场面可跨多个槽位铺垫，主角不必最先登场。
+9. relationship_ids 只引用本事件真正触碰的 relationship_tracks.relationship_id；关系变化必须服从该轨迹及其全书关系弧边界，无关系推进时输出空数组。
+
+## 输入
+全书长线：{{ input_pack.longline_content | tojson(indent=2) }}
+
+卷纲事件槽：{{ input_pack.volume_plan_content | tojson(indent=2) }}
+
+卷故事核心：{{ input_pack.volume_story_core | tojson(indent=2) }}
+
+卷地图与场景：{{ input_pack.volume_map_room | tojson(indent=2) }}
+
+复杂度：{{ input_pack.complexity_profile | default({}) | tojson(indent=2) }}
+
+## 输出结构
+{
+  "event_designs": [
+    {
+      "slot_id": "精确引用事件槽ID",
+      "dramatic_center": "谁为了什么，在何种阻力下作出什么选择",
+      "reader_payoff": "读完本事件获得的主要满足或新期待",
+      "surface_goal": "本章开场人物正在主动完成的具体目标",
+      "content_must_include": ["必须写到的动作、对话、发现、关系反应或后果；2-6项"],
+      "content_must_mention": ["需要自然提及但不必展开的信息；0-3项"],
+      "content_must_avoid": ["不能提前写、概述跳过、重复或越权揭示的内容"],
+      "character_focus_ids": ["1-4个角色ID"],
+      "character_scene_goals": [{"character_id": "角色ID", "scene_goal": "本章具体目标", "pressure_response": "受压时的可见反应"}],
+      "location_ids": ["1-3个地点ID"],
+      "scene_asset_ids": ["0-3个场景资产ID"],
+      "foreshadowing_ids": ["0-4个伏笔ID"],
+      "relationship_ids": ["本事件实际触碰的0-3个关系轨迹ID"],
+      "active_line_ids": ["本事件实际推进、碰撞、误导、暂压或回收的故事线ID"],
+      "entity_agenda_ids": ["需要推演自主行动的议程ID"],
+      "item_track_ids": ["实际作用的关键物品轨迹ID"],
+      "set_piece_id": "大场面ID或null",
+      "transient_asset_ids": ["本事件实际使用的临时资产ID"],
+      "expansion_routes": ["plot/character/relationship/faction/item/ecology/mystery/set_piece/aftermath/ensemble中的2-6项"],
+      "narrative_weight": "small/standard/large/epic，不等于章节数量或字数",
+      "offscreen_required": true,
+      "map_constraints": ["移动耗时、进入条件、空间限制与地点状态"],
+      "foreshadow_actions": [{"hook_id": "伏笔ID", "action": "埋设/递进/回收", "visible_carrier": "正文载体"}],
+      "growth_actions": [{"character_id": "角色ID", "growth_node": "推进节点", "visible_behavior": "必须通过什么选择或行为可见"}],
+      "relationship_actions": [{"relationship_id": "关系轨迹ID", "movement": "维持/摩擦/试探/靠近/决裂/重组", "visible_evidence": "动作、称呼、距离、资源或风险承担的可见证据"}],
+      "relationship_change": "本章关系是否变化以及变化幅度；无变化也要说明维持方式",
+      "ending_requirement": "事件写完后必须形成的事实结果、压力、余波或新驱动力；不是强制章末钩"
+    }
+  ]
+}

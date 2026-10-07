@@ -1,0 +1,6 @@
+prompt_key: graph4.worldPulse
+version: "1.0"
+description: "事件时间窗内实体自主行动推演"
+shared_fragments: [json_output_contract]
+variables: [input_pack.event_slot, input_pack.event_route, input_pack.latest_snapshot, input_pack.char_content, input_pack.ledger_content, input_pack.volume_content]
+output_format: json

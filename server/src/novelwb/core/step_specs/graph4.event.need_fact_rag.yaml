@@ -1,0 +1,30 @@
+step_key: graph4.event.need_fact_rag
+graph: "4"
+schema_version: v1
+description: "真值细节需求判断（RAG触发判断，当前版本跳过联网）"
+input_schema: CreateRunRequest
+output_schema: RunManifest
+commit_type: none
+is_key_artifact: false
+
+llm:
+  prompt_key: graph4.needFactRag
+  best_of_n: 1
+  offline: true
+  model: deepseek-v4-flash
+  thinking: disabled
+  response_format: json_object
+  max_tokens: 500
+  temperature: 0.1
+
+hardlint:
+  profile: default
+  enabled_rule_groups: [A]
+
+regression:
+  required_on_key_artifact: false
+  profiles: []
+
+# RAG 当前跳过，此步骤直接返回 need_rag=false
+rag:
+  enabled: false

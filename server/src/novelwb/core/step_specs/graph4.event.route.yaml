@@ -1,0 +1,13 @@
+step_key: graph4.event.route
+graph: "4"
+schema_version: v1
+description: "按事件当前状态动态选择叙事展开维度与阅读资产"
+input_schema: CreateRunRequest
+output_schema: EventSlot
+commit_type: none
+is_key_artifact: false
+llm: {prompt_key: graph4.eventRoute, best_of_n: 1, offline: true, model: deepseek-v4-pro, thinking: enabled, reasoning_effort: high, response_format: json_object, max_tokens: 2500, temperature: 0.35}
+hardlint: {profile: event_commit, enabled_rule_groups: [A, B, G]}
+regression: {required_on_key_artifact: false, profiles: [event_boundary]}
+rag: {enabled: false}
+budget: {max_new_entities: 0, max_new_terms: 0, max_explanation_density: 0.12}
