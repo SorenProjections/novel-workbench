@@ -33,6 +33,7 @@ def test_task_replay_is_idempotent_and_tracks_usage(tmp_path):
     try:
         service.start(layout, "run_a", "workflow", {}, work)
         state = _finish(service, layout, "run_a")
+        assert state["status"] == "completed", state
         service.start(layout, "run_a", "workflow", {}, work)
         assert calls == [1]
         assert state["input_tokens"] == 12 and state["output_tokens"] == 3
