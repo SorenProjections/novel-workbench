@@ -1,11 +1,12 @@
 # 本地开源交付验收记录
 
-日期：2026-10-08（Asia/Shanghai）。基础提交：`a76c87f`。
-本记录对应在该提交上准备的开源交付改动，已归入本地提交 `bb5fc5b`；尚未公开发布。
+日期：2026-10-08（Asia/Shanghai）。本记录保留首次开源交付准备时的验证结果，
+对应提交 `chore: prepare MIT open-source delivery`；后续验证以 [GitHub Actions](https://github.com/SorenProjections/novel-workbench/actions) 为准。
 
 ## 已完成
 
-- 采用 [MIT](../LICENSE)，当前版权署名为 `SorenProjections`，已随 GitHub 用户名更新；历史提交保留原作者信息。
+- 采用 [MIT](../LICENSE)，当前版权署名为 `SorenProjections`；公开前已将历史提交的作者及提交者
+  统一为 `SorenProjections <soren@sorenprojections.com>`，原历史备份仅保存在本地。
   Python 包带有相同许可证、作者和项目简介；前端分发携带依赖许可声明。
 - 整理 [README](../README.md)、[贡献指南](../CONTRIBUTING.md)、[安全说明](../SECURITY.md)、
   Issue/PR 模板、[发布检查流程](RELEASING.md)及 CI 检查。
@@ -42,7 +43,7 @@ SHA-256：`19d0c7dcd5b2c766f63a4c241e0a7ac24a704c621fa7067174d06ec7f3f6fb88`。
 
 ## 验证范围与下一步
 
-现有验证使用已安装的依赖，不等同于联网全新环境安装；GitHub Actions 尚未在远端运行。
+本表所记的首次验证使用已安装的依赖，不等同于联网全新环境安装；当时尚未执行远端 GitHub Actions。
 离线演示只覆盖基座第一个文件 `spec00`，没有进行真实模型质量、长篇一致性、费用或用户效果实验。
 扫描是基于规则的检查，不是全面安全审计或依赖授权审计，也不读取 Git 作者邮箱等提交元数据。
 

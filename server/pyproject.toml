@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Human-reviewed LLM workflows and versioned story assets for long-form fiction"
 readme = "README.md"
 license = {file = "LICENSE"}
-authors = [{name = "SorenProjections"}]
+authors = [{name = "SorenProjections", email = "soren@sorenprojections.com"}]
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111",
@@ -34,6 +34,10 @@ dev = [
 
 [project.scripts]
 novelwb = "novelwb.cli.main:main"
+
+[project.urls]
+Repository = "https://github.com/SorenProjections/novel-workbench"
+Issues = "https://github.com/SorenProjections/novel-workbench/issues"
 
 [tool.setuptools]
 license-files = ["LICENSE"]

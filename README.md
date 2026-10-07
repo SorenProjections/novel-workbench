@@ -63,6 +63,15 @@ flowchart LR
 仓库根目录运行。建议先按 [贡献指南](CONTRIBUTING.md) 创建并激活虚拟环境。
 首次安装依赖需要网络，安装完成后的离线演示不调用外部模型。
 
+获取源码：
+
+```powershell
+git clone https://github.com/SorenProjections/novel-workbench.git
+cd novel-workbench
+```
+
+在虚拟环境中安装并运行：
+
 ```powershell
 python -m pip install -c server/requirements-dev.lock -e "./server[dev]"
 npm --prefix webui ci

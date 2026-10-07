@@ -12,14 +12,19 @@ from novelwb.storage.workspace_layout import WorkspaceLayout
 from novelwb.utils.io_atomic import atomic_write_json
 
 
+# These tests coordinate durable disk writes on shared Windows/Linux CI runners;
+# the deadline bounds a hang, rather than asserting a five-second performance SLA.
+TASK_TIMEOUT = 30
+
+
 def _finish(service, layout, run_id):
-    deadline = time.monotonic() + 5
+    deadline = time.monotonic() + TASK_TIMEOUT
     while time.monotonic() < deadline:
         state = service.get(layout, run_id)
         if state["status"] in {"completed", "cancelled", "failed", "interrupted"}:
             return state
         time.sleep(.01)
-    raise AssertionError("task did not terminate")
+    raise AssertionError(f"task did not terminate: {state!r}")
 
 
 def test_task_replay_is_idempotent_and_tracks_usage(tmp_path):
@@ -54,18 +59,19 @@ def test_task_cancel_is_project_scoped_and_prevents_next_step(tmp_path):
     ready, release = threading.Event(), threading.Event()
     committed = []
     def work(progress):
-        ready.set(); release.wait(5)
+        ready.set(); assert release.wait(TASK_TIMEOUT)
         progress({"event":"step"})
         committed.append(1)
         return {}
     try:
         service.start(layout, "run_a", "workflow", {}, work)
-        assert ready.wait(5)
+        assert ready.wait(TASK_TIMEOUT)
         with pytest.raises(FileNotFoundError):
             service.cancel(other, "run_a")
         service.cancel(layout, "run_a")
         release.set()
-        assert _finish(service, layout, "run_a")["status"] == "cancelled"
+        state = _finish(service, layout, "run_a")
+        assert state["status"] == "cancelled", state
         assert committed == []
     finally:
         release.set(); service.close()
@@ -137,7 +143,7 @@ def test_queue_capacity_and_shutdown_cancel_only_queued_jobs(tmp_path):
     calls = []
     def running(progress):
         ready.set()
-        assert release.wait(5)
+        assert release.wait(TASK_TIMEOUT)
         calls.append("one")
         return {}
     def queued(progress):
@@ -145,14 +151,15 @@ def test_queue_capacity_and_shutdown_cancel_only_queued_jobs(tmp_path):
         return {}
     try:
         service.start(one, "run", "workflow", {}, running)
-        assert ready.wait(5)
+        assert ready.wait(TASK_TIMEOUT)
         service.start(two, "run", "workflow", {}, queued)
         with pytest.raises(ValueError, match="队列已满"):
             service.start(three, "run", "workflow", {}, queued)
         service.close()
         assert service.get(two, "run")["status"] == "cancelled"
         release.set()
-        assert _finish(service, one, "run")["status"] == "completed"
+        state = _finish(service, one, "run")
+        assert state["status"] == "completed", state
         assert calls == ["one"]
     finally:
         release.set()
