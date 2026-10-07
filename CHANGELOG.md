@@ -2,7 +2,7 @@
 
 只记录 v1.x 功能变更和 rX 规范修订。计划外改动请开 v2 + migration。
 
-## [Unreleased] — 本地开源交付准备
+## [Unreleased]
 
 - 新增“模型与 API”配置页：多套命名配置、API 地址、模型 ID、只写密钥保存、测试连接及新任务切换
 - 支持 DeepSeek、OpenAI Chat Completions 兼容接口、OpenAI Responses、Claude Messages 和 Gemini generateContent
@@ -13,7 +13,7 @@
 - 增加隔离工作区的无密钥审核演示、演示路线和真实模型评测记录方案
 - 增加贡献指南、安全边界、问题模板、PR 模板和本地发布验收流程
 - 增加工作文件、暂存区及 Git 可达历史检查；报告不输出疑似凭据内容
-- 增加交付脚本回归检查，并纳入 Windows/Linux 后端 CI；未执行远端发布
+- 增加交付脚本回归检查，并纳入 Windows/Linux 后端 CI
 
 ## [v1.0+r7] - 2026-07-16
 

@@ -15,8 +15,8 @@ OpenAI 兼容接口、OpenAI Responses、Claude 和 Gemini 配置。
 
 ## 项目状态与能力边界
 
-这是一个按个人精力维护的创作与工程实践项目，不承诺固定更新频率或支持时限。
-欢迎可复现的问题、文档改进和范围明确的修复。
+本项目由个人开发与维护，探索 AI 辅助长篇创作中的流程控制、人工审核和数据一致性。
+欢迎分享使用反馈、报告问题，或参与文档与功能改进。
 
 - **可体验**：逐文件审核、分层资产编辑、后台任务进度、版本检查与持久化提交。
 - **工程保障**：重复批准幂等、失败回滚、进程崩溃恢复、SSE 回放与本地草稿恢复，均有对应回归测试。
@@ -189,7 +189,7 @@ python -m pytest tests/test_context_compiler.py -q
 
 审核页和资产编辑页自动保存浏览器本地草稿，切页/刷新后恢复，并提供修改前后对照。来源版本更新会提示冲突；浏览器存储失败时显示复制保存提示。
 
-CLI 与 API 共用工作区配置，可通过 `NOVELWB_WORKSPACE` 指定创作数据目录。项目回归检查全部已提交事件与章节，并显示实际检查数量。本次改动和本地验证记录见 [`docs/OPTIMIZATION_REPORT.md`](docs/OPTIMIZATION_REPORT.md)。
+CLI 与 API 共用工作区配置，可通过 `NOVELWB_WORKSPACE` 指定创作数据目录。项目回归检查全部已提交事件与章节，并显示实际检查数量。可靠性改进与验证记录见 [`docs/OPTIMIZATION_REPORT.md`](docs/OPTIMIZATION_REPORT.md)。
 
 ```powershell
 python scripts/check_spec_sync.py
@@ -215,7 +215,7 @@ Smoke 与离线评测使用隔离的验证目录，不读写创作运行数据�
 本地发布准备可执行 `python scripts/check_release.py --history`；暂存后用
 `python scripts/check_release.py --index --history` 检查实际提交内容。
 详细范围、限制和打包命令见 [RELEASING.md](docs/RELEASING.md)。
-本次已执行的检查及其边界见 [本地交付验收记录](docs/OPEN_SOURCE_PREP.md)。
+早期交付检查的结果与验证范围见 [本地交付验收记录](docs/OPEN_SOURCE_PREP.md)。
 
 ## 许可证与贡献
 
@@ -224,5 +224,5 @@ Smoke 与离线评测使用隔离的验证目录，不读写创作运行数据�
 第三方前端依赖的许可文本单独保存在
 [THIRD_PARTY_NOTICES.txt](webui/public/THIRD_PARTY_NOTICES.txt)，并随网页和 wheel 分发。
 
-本地开源交付准备不代表已经公开发布。项目后续按个人精力维护；参与方式见
-[CONTRIBUTING.md](CONTRIBUTING.md)。
+欢迎通过 Issue 交流使用体验与改进建议，也欢迎提交 Pull Request。
+开发环境、问题报告和提交约定见 [贡献指南](CONTRIBUTING.md)。
