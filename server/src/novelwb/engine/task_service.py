@@ -86,10 +86,14 @@ class TaskService:
             yield
 
     def get(self, layout: WorkspaceLayout, run_id: str) -> dict[str, Any]:
-        path = self._path(layout, run_id)
-        if not path.exists():
+        layout.validate_id(run_id)
+        # A missing lookup must not create task directories. Resolve the state
+        # file only under the guard: Windows realpath briefly opens a handle
+        # that can prevent a concurrent atomic replacement.
+        if not (self._directory(layout) / f"{run_id}.json").exists():
             raise FileNotFoundError("运行不存在")
         with self._guard(layout):
+            path = self._path(layout, run_id)
             state = read_json(path)
             if state is None:
                 raise FileNotFoundError("运行不存在")
@@ -119,8 +123,9 @@ class TaskService:
         params: dict[str, Any],
         work: Callable[[Callable[[dict[str, Any]], None]], dict[str, Any]],
     ) -> dict[str, Any]:
-        path = self._path(layout, run_id)
+        layout.validate_id(run_id)
         with self._guard(layout):
+            path = self._path(layout, run_id)
             if path.exists():
                 existing = self.get(layout, run_id)
                 if existing["kind"] != kind or existing["params"] != params:
@@ -274,7 +279,9 @@ class TaskService:
             return rows, file.tell()
 
     def events(self, layout: WorkspaceLayout, run_id: str, after: int = 0) -> Iterator[str]:
-        path = self._path(layout, run_id)
+        self.get(layout, run_id)
+        with self._guard(layout):
+            path = self._path(layout, run_id)
         cursor, offset = max(0, after), 0
         while True:
             state = self.get(layout, run_id)
